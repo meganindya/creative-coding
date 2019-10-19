@@ -45,27 +45,29 @@ body {
   flex-direction: row;
 }
 
-.stat-box:nth-of-type(0) {
-  justify-content: left;
-}
-
-.stat-box:nth-of-type(1) {
-  justify-content: right;
-}
-
 #bomb-image {
   width: 36px;
   height: 100%;
   box-sizing: border-box;
-  border-radius: 4px;
-  background-image: url("images/bomb.png");
-  background-size: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.75) url("images/bomb.png") no-repeat center;
+  background-size: 28px;
 }
 
 #bomb-count {
   width: 36px;
   height: 100%;
-  background-color: #f00;
+  border-radius: 8px;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  background-color: #005;
+}
+
+#bomb-count span {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
 }
 
 .btn-reset {
@@ -92,14 +94,27 @@ body {
 #flag-image {
   width: 36px;
   height: 100%;
-  background-image: url("images/flag.png");
-  background-size: 36px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  margin-left: 24px;
+  background: rgba(255, 255, 255, 0.75) url("images/flag.png") no-repeat center;
+  background-size: 32px;
 }
 
 #flag-count {
   width: 36px;
   height: 100%;
-  background-color: #f00;
+  border-radius: 8px;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  background-color: #005;
+}
+
+#flag-count span {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
 }
 
 .cell {
