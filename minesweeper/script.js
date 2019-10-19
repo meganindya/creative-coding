@@ -1,7 +1,7 @@
 // globals
 
 var grid;
-var numRow = 4, numCol = 4, numMines = 10;
+var numRow = 8, numCol = 8, numMines = 10;
 var cellSize = 75;
 
 var gameOver, gameWon, numExposed, numFlags, numSpotted;
@@ -167,6 +167,12 @@ function isExposable(row, col) {
     return true;
 }
 
+function exposeAll() {
+    for (i = 0; i < numRow; i++)
+        for (j = 0; j < numCol; j++)
+            grid[i][j].exposed = true;
+}
+
 
 
 // cell specific
@@ -187,11 +193,6 @@ function placeFlag(row, col) {
         numFlags++;
         
         if (grid[row][col].isMine)  numSpotted++;
-        
-        $("#cell-" + row + "-" + col).css({
-            "background":"violet url(\"images/flag.png\") no-repeat center",
-            "background-size":(cellSize - 15 + "px")
-        });
     }
 
     else {
@@ -238,6 +239,8 @@ function checkGame() {
         (numMines == numSpotted)) {
         gameOver = true;
         gameWon = true;
+
+        exposeAll();
         $("#status").children("span").html("You Won!");
     }
 
@@ -291,8 +294,16 @@ function refreshBoard() {
                 cell.css("background", "violet");
                 span.hide();
             }
+
+            if (grid[i][j].flagged) {
+                $("#cell-" + i + "-" + j).css({
+                    "background":"violet url(\"images/flag.png\") no-repeat center",
+                    "background-size":(cellSize - 15 + "px")
+                });
+            }
         }
     }
 
     $("#bomb-count").children("span").html(numMines);
+    $("#flag-count").children("span").html(numFlags);
 }
