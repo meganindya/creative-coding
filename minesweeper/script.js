@@ -1,104 +1,115 @@
-var x;
+// declarations
 
-var row = 8, col = 8, mines = 10;
+var grid;
+var numRow = 8, numCol = 8, numMines = 10;
+
+class Cell {
+    constructor(row, col) {
+        this.rowIndex = row;
+        this.colIndex = col;
+
+        this.value = 0;
+        this.isMine = false;
+        this.exposed = false;
+    }
+}
 
 
+
+// document functions
 
 $(document).ready(function() {
-    initialDraw();
-    addGrid();
+    createGrid();
     addMines();
-    addNumbers();
-    exposeAll();
+    addValues();
+    
+    //exposeAll();
+    refreshBoard();
 });
 
 $(document).click(function(event) {
-    if($(event.target).hasClass("cell")) {
-        var coord = event.target.id.split(".");
-        exposeCell(coord[0], coord[1]);
+    var curr = $(event.target);
+    if (curr.hasClass("cell")) {
+        var parent = curr.parent();
+        var rowIndex, colIndex;
+        
+        /*outer:
+        for (i = 0; i < numRow; i++) {
+            for (j = 0; j < numCol; j++) {
+                var temp = ".cell:nth-child(" + ((i * numCol) + j) + ")";
+                var cell = parent.children(temp);
+                console.log(cell);
+
+                if (cell == curr) {
+                    rowIndex = i;
+                    colIndex = j;
+
+                    break outer;
+                }
+            }
+        }*/
+
+        console.log(rowIndex, colIndex);
     }
 });
 
 
 
-// applicable to whole grid
+// board specific
 
-function initialDraw() {
-    var div = document.createElement("div");
-    div.id = "outer";
-    div.className = "clearfix";
-    document.body.appendChild(div);
+function createGrid() {
+    grid = new Array(numRow);
 
-    div = document.createElement("div");
-    div.className = "heading";
-    document.getElementById("outer").appendChild(div);
-}
+    for (i = 0; i < numRow; i++) {
+        grid[i] = new Array(numCol);
 
-function addGrid() {
-    x = new Array(row);
-
-    for (i = 0; i < row; i++) {
-        x[i] = new Array(col);
-
-        for (j = 0; j < col; j++) {
-            x[i][j] = "";
-            addBlock(i, j);
+        for (j = 0; j < numCol; j++) {
+            grid[i][j] = new Cell(i, j);
+            createCell();
         }
     }
-}
-
-function addBlock(r, c) {
-    var div = document.createElement("div");
-    div.id = r + "." + c;
-    div.className = "cell";
-    document.getElementById("outer").appendChild(div);
 }
 
 function addMines() {
-    for (i = 0; i < mines; i++) {
-        var mr = Math.floor(Math.random() * row);
-        var mc = Math.floor(Math.random() * col);
+    for (i = 0; i < numMines; i++) {
+        var mineRow = Math.floor(Math.random() * numRow);
+        var mineCol = Math.floor(Math.random() * numCol);
 
-        if (x[mr][mc] != '•')
-            x[mr][mc] = '•';
+        if (!grid[mineRow][mineCol].isMine)
+            grid[mineRow][mineCol].isMine = true;
         
-        else {
-            i--;
-            continue;
-        }
+        else    i--;
     }
 }
 
-function addNumbers() {
-    for(i = 0; i < row; i++) {
-        for(j = 0; j < col; j++) {
-            if(x[i][j] == '•')
+function addValues() {
+    for(i = 0; i < numRow; i++) {
+        for(j = 0; j < numCol; j++) {
+            if(grid[i][j].isMine)
                 continue;
             
-            var k = 0;
+            var count = 0;
             for (m = -1; m <= 1; m++) {
-                if ((i + m) < 0 || (i + m) >= row)
+                if ((i + m) < 0 || (i + m) >= numRow)
                     continue;
                 
                 for (n = -1; n <= 1; n++) {
-                    if ((j + n) < 0 || (j + n) >= col || (m == 0 && n == 0))
+                    if ((j + n) < 0 || (j + n) >= numCol || (m == 0 && n == 0))
                         continue;
                     
-                    if (x[i + m][j + n] == '•')
-                        k++;
+                    if (grid[i + m][j + n].isMine)
+                        count++;
                 }
             }
-
-            if (k > 0)  x[i][j] = k; 
+            grid[i][j].value = count;
         }
     }
 }
 
 function exposeAll() {
-    for (i = 0; i < row; i++) {
-        for(j = 0; j < col; j++) {
-            document.getElementById(i + "." + j).innerHTML = x[i][j];
-        }
+    for (i = 0; i < numRow; i++) {
+        for(j = 0; j < numCol; j++)
+            grid[i][j].exposed = true;
     }
 }
 
@@ -106,39 +117,40 @@ function exposeAll() {
 
 // cell specific
 
-function exposeCell(r, c) {
-    var cell = document.getElementById(r + "." + c);
-    
-    if (getComputedStyle(cell, null).background.includes("rgb(255, 255, 255)"))
-        return;
-    
-    cell.style.background = "#fff";
-    cell.style.color = "#000";
-    
-    // bomb
-    if (x[r][c] == "•") {
-        exposeAll();
-    }
+function createCell() {
+    cell = document.createElement("div");
+    cell.className = "cell";
+    document.getElementById("board").appendChild(cell);
 
-    // number
-    else if (x[r][c] != "") {
-        cell.innerHTML = x[r][c];
-    }
-    
-    // empty
-    else {
-        r = parseInt(r);
-        c = parseInt(c);
-        
-        for (m = -1; m <= 1; m++) {
-            if ((r + m) < 0 || (r + m) >= row)
-                continue;
+    span = document.createElement("span");
+    cell.appendChild(span);
+}
+
+
+
+// drawing functions
+
+function refreshBoard() {
+    for (i = 0; i < numRow; i++) {
+        for (j = 0; j < numCol; j++) {
+            var temp = ".cell:nth-child(" + (1 + (i * numCol) + j) + ")";
+            var cell = $("#board").children(temp);
+            var span = cell.children("span");
             
-            for (n = -1; n <= 1; n++) {
-                if ((c + n) < 0 || (c + n) >= col || (m == 0 && n == 0))
-                    continue;
+            if (grid[i][j].exposed) {
+                cell.css("background-color", "red");
                 
-                exposeCell(r + m, c + n);
+                if (grid[i][j].isMine)
+                    span.html("•");
+                else
+                    span.html(grid[i][j].value);
+                
+                span.show();
+            }
+
+            else {
+                cell.css("background-color", "violet");
+                span.hide();
             }
         }
     }
