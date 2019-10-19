@@ -4,7 +4,7 @@ var grid;
 var numRow = 8, numCol = 8, numMines = 10;
 var cellSize = 75;
 
-var gameOver, gameWon, numExposed, numFlags, numSpotted;
+var gameOver, gameWon, numExposed, numFlags, numSpotted, explodedCell;
 
 class Cell {
     constructor(row, col) {
@@ -45,6 +45,11 @@ $(document).click(function(event) {
         exposeCell(temp[1], temp[2]);
 
         checkGame();
+        refreshBoard();
+    }
+
+    if (curr.hasClass("xp")) {
+        exposeAll();
         refreshBoard();
     }
 });
@@ -115,12 +120,7 @@ function addValues() {
         }
     }
 
-    for (i = 0; i < numRow; i++) {
-        var str = "";
-        for (j = 0; j < numCol; j++)
-            str += grid[i][j].value + " ";
-        console.log(str);
-    }
+    printGrid();
 }
 
 function exposeCell(row, col) {
@@ -173,6 +173,20 @@ function exposeAll() {
             grid[i][j].exposed = true;
 }
 
+function printGrid() {
+    for (i = 0; i < numRow; i++) {
+        var str = "";
+        for (j = 0; j < numCol; j++) {
+            if (grid[i][j].isMine)
+                str += "X ";
+            else
+                str += grid[i][j].value + " ";
+        }
+        console.log(str);
+    }
+    console.log("");
+}
+
 
 
 // cell specific
@@ -202,7 +216,7 @@ function placeFlag(row, col) {
         if (grid[row][col].isMine)  numSpotted--;
         
         $("#cell-" + row + "-" + col).css({
-            "background":"violet",
+            "background":"SlateBlue",
         });
     }
     
@@ -218,12 +232,13 @@ function reset() {
     numExposed = 0;
     numFlags = 0;
     numSpotted = 0;
+    explodedCell = [-1, -1];
 
     for (i = 0; i < numRow; i++)
         for (j = 0; j < numCol; j++) {
             grid[i][j] = new Cell(i, j);
             $("#cell-" + i + "-" + j).css({
-                "background":"violet"
+                "background":"SlateBlue"
             });
         }
 
@@ -240,7 +255,6 @@ function checkGame() {
         gameOver = true;
         gameWon = true;
 
-        exposeAll();
         $("#status").children("span").html("You Won!");
     }
 
@@ -250,15 +264,16 @@ function checkGame() {
         else
             $("#status").children("span").html("");
     }
+
+    if (gameOver)   exposeAll();
 }
 
 function explodeMine(row, col) {
     gameOver = true;
+    gameWon = false;
+    
     grid[row][col].exposed = true;
-    $("#cell-" + row + "-" + col).css({
-        "background-image":"url(\"images/explosion.png\")",
-        "background-size":(cellSize + "px")
-    });
+    explodedCell = [row, col];
 }
 
 
@@ -280,28 +295,45 @@ function refreshBoard() {
             var span = cell.children("span");
             
             if (grid[i][j].exposed) {
-                cell.css("background-color", "#aaa");
+                cell.css("background-color", "beige");
                 
-                if (grid[i][j].isMine)
-                    span.html("•");
-                else
-                    span.html(grid[i][j].value);
+                if (!grid[i][j].isMine) {
+                    if (grid[i][j].value != 0)
+                        span.html(grid[i][j].value);
+                    else
+                        span.html("");
+                }
+
+                else {
+                    span.html(/*"•"*/);
+                    cell.css({
+                        "background":"beige url(\"images/bomb.png\") no-repeat center",
+                        "background-size":(cellSize - 27 + "px")
+                    });
+                }
                 
                 span.show();
             }
 
             else {
-                cell.css("background", "violet");
+                cell.css("background", "SlateBlue");
                 span.hide();
             }
 
             if (grid[i][j].flagged) {
                 $("#cell-" + i + "-" + j).css({
-                    "background":"violet url(\"images/flag.png\") no-repeat center",
+                    "background":"SlateBlue url(\"images/flag.png\") no-repeat center",
                     "background-size":(cellSize - 15 + "px")
                 });
             }
         }
+    }
+
+    if (gameOver && !gameWon) {
+        $("#cell-" + explodedCell[0] + "-" + explodedCell[1]).css({
+            "background-image":"url(\"images/explosion.png\")",
+            "background-size":(cellSize + "px")
+        });
     }
 
     $("#bomb-count").children("span").html(numMines);
