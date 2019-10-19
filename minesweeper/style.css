@@ -67,7 +67,7 @@ body {
 #bomb-count span {
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: whitesmoke;
 }
 
 .btn-reset {
@@ -114,7 +114,7 @@ body {
 #flag-count span {
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: whitesmoke;
 }
 
 .cell {
@@ -148,5 +148,5 @@ body {
 #status span {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #fff;
+  color: whitesmoke;
 }
