@@ -1,10 +1,10 @@
-// declarations
+// globals
 
 var grid;
 var numRow = 4, numCol = 4, numMines = 10;
+var cellSize = 75;
 
-var gameover = false;
-var numExposed = 0;
+var gameOver, gameWon, numExposed, numFlags, numSpotted;
 
 class Cell {
     constructor(row, col) {
@@ -14,6 +14,7 @@ class Cell {
         this.value = 0;
         this.isMine = false;
         this.exposed = false;
+        this.flagged = false;
     }
 }
 
@@ -23,21 +24,42 @@ class Cell {
 
 $(document).ready(function() {
     setupBoard();
-
     createGrid();
-    addMines();
-    addValues();
     
-    //exposeAll();
-    refreshBoard();
+    reset();
+
+    $('.cell').contextmenu(function() {
+        return false;
+    })
 });
 
 $(document).click(function(event) {
     var curr = $(event.target);
-    if (curr.hasClass("cell") && !exploded) {
+    
+    if (curr.hasClass("btn-reset") || curr.parent().hasClass("btn-reset")) {
+        reset();
+    }
+
+    if (curr.hasClass("cell") && !gameOver) {
         var temp = curr.attr('id').split("-");
         exposeCell(temp[1], temp[2]);
+
+        checkGame();
         refreshBoard();
+    }
+});
+
+$(document).mousedown(function(event) {
+    if (event.button == 2) {
+        var curr = $(event.target);
+        
+        if (curr.hasClass("cell") && !gameOver) {
+            var temp = curr.attr('id').split("-");
+            placeFlag(temp[1], temp[2]);
+
+            checkGame();
+            refreshBoard();
+        }
     }
 });
 
@@ -101,13 +123,6 @@ function addValues() {
     }
 }
 
-function exposeAll() {
-    for (i = 0; i < numRow; i++) {
-        for(j = 0; j < numCol; j++)
-            grid[i][j].exposed = true;
-    }
-}
-
 function exposeCell(row, col) {
     if (!isExposable(row, col))
         return;
@@ -118,7 +133,7 @@ function exposeCell(row, col) {
     }
 
 
-    // breadth first search
+    // breadth-first search
     var queue = [];
     queue.push([row, col]);
 
@@ -127,9 +142,9 @@ function exposeCell(row, col) {
         if (!isExposable(coord[0], coord[1]))
             continue;
         
-        //console.log(coord[0], coord[1]);
         var cell = grid[coord[0]][coord[1]];
         cell.exposed = true;
+        numExposed++;
 
         if (cell.value == 0) {
             for (i = -1; i <= 1; i++) {
@@ -166,10 +181,81 @@ function createCell(row, col) {
     cell.appendChild(span);
 }
 
+function placeFlag(row, col) {
+    if (!grid[row][col].flagged) {
+        grid[row][col].flagged = true;
+        numFlags++;
+        
+        if (grid[row][col].isMine)  numSpotted++;
+        
+        $("#cell-" + row + "-" + col).css({
+            "background":"violet url(\"images/flag.png\") no-repeat center",
+            "background-size":(cellSize - 15 + "px")
+        });
+    }
+
+    else {
+        grid[row][col].flagged = false;
+        numFlags--;
+        
+        if (grid[row][col].isMine)  numSpotted--;
+        
+        $("#cell-" + row + "-" + col).css({
+            "background":"violet",
+        });
+    }
+    
+}
+
+
+
+// environment functions
+
+function reset() {
+    gameOver = false;
+    gameWon = false;
+    numExposed = 0;
+    numFlags = 0;
+    numSpotted = 0;
+
+    for (i = 0; i < numRow; i++)
+        for (j = 0; j < numCol; j++) {
+            grid[i][j] = new Cell(i, j);
+            $("#cell-" + i + "-" + j).css({
+                "background":"violet"
+            });
+        }
+
+    addMines();
+    addValues();
+    
+    checkGame();
+    refreshBoard();
+}
+
+function checkGame() {
+    if ((numRow * numCol == numMines + numExposed) ||
+        (numMines == numSpotted)) {
+        gameOver = true;
+        gameWon = true;
+        $("#status").children("span").html("You Won!");
+    }
+
+    else {
+        if (gameOver)
+            $("#status").children("span").html("Game Over!");
+        else
+            $("#status").children("span").html("");
+    }
+}
+
 function explodeMine(row, col) {
-    gameover = true;
+    gameOver = true;
     grid[row][col].exposed = true;
-    console.log("BOMB!! at", row, col);
+    $("#cell-" + row + "-" + col).css({
+        "background-image":"url(\"images/explosion.png\")",
+        "background-size":(cellSize + "px")
+    });
 }
 
 
@@ -177,9 +263,9 @@ function explodeMine(row, col) {
 // markup functions
 
 function setupBoard() {
-    var width = (numCol * 75) + "px";
+    var width = (numCol * cellSize) + "px";
     $("#board").css("width", width);
-    var height = (numRow * 75) + "px";
+    var height = (numRow * cellSize) + "px";
     $("#board").css("width", height);
 }
 
@@ -202,9 +288,11 @@ function refreshBoard() {
             }
 
             else {
-                cell.css("background-color", "violet");
+                cell.css("background", "violet");
                 span.hide();
             }
         }
     }
+
+    $("#bomb-count").children("span").html(numMines);
 }
