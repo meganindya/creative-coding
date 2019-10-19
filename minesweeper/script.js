@@ -2,6 +2,8 @@ var x;
 
 var row = 8, col = 8, mines = 10;
 
+
+
 $(document).ready(function() {
     initialDraw();
     addGrid();
