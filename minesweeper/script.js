@@ -47,11 +47,6 @@ $(document).click(function(event) {
         checkGame();
         refreshBoard();
     }
-
-    if (curr.hasClass("xp")) {
-        exposeAll();
-        refreshBoard();
-    }
 });
 
 $(document).mousedown(function(event) {
@@ -120,7 +115,7 @@ function addValues() {
         }
     }
 
-    printGrid();
+    //printGrid();
 }
 
 function exposeCell(row, col) {
@@ -305,7 +300,7 @@ function refreshBoard() {
                 }
 
                 else {
-                    span.html(/*"•"*/);
+                    span.html(""/*"•"*/);
                     cell.css({
                         "background":"beige url(\"images/bomb.png\") no-repeat center",
                         "background-size":(cellSize - 27 + "px")
