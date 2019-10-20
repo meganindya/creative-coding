@@ -202,6 +202,8 @@ function createCell(row, col) {
 
 function placeFlag(row, col) {
     if (!grid[row][col].flagged) {
+        if (numFlags == numMines)   return;
+        
         grid[row][col].flagged = true;
         numFlags++;
         
