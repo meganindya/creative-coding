@@ -290,11 +290,14 @@ function refreshBoard() {
             var span = cell.children("span");
             
             if (grid[i][j].exposed) {
-                cell.css("background-color", "beige");
+                cell.css("background-color", "Seashell");
                 
                 if (!grid[i][j].isMine) {
-                    if (grid[i][j].value != 0)
+                    if (grid[i][j].value != 0) {
                         span.html(grid[i][j].value);
+                        span.css("color", getTextColor(grid[i][j].value));
+                    }
+                    
                     else
                         span.html("");
                 }
@@ -302,7 +305,7 @@ function refreshBoard() {
                 else {
                     span.html(""/*"•"*/);
                     cell.css({
-                        "background":"beige url(\"images/bomb.png\") no-repeat center",
+                        "background":"Seashell url(\"images/bomb.png\") no-repeat center",
                         "background-size":(cellSize - 27 + "px")
                     });
                 }
@@ -316,8 +319,25 @@ function refreshBoard() {
             }
 
             if (grid[i][j].flagged) {
+                span.html("");
                 $("#cell-" + i + "-" + j).css({
                     "background":"SlateBlue url(\"images/flag.png\") no-repeat center",
+                    "background-size":(cellSize - 15 + "px")
+                });
+            }
+
+            if (gameOver && grid[i][j].flagged && !grid[i][j].isMine) {
+                span.html("");
+                $("#cell-" + i + "-" + j).css({
+                    "background":"Red url(\"images/flag.png\") no-repeat center",
+                    "background-size":(cellSize - 15 + "px")
+                });
+            }
+
+            if (gameOver && grid[i][j].flagged && grid[i][j].isMine) {
+                span.html("");
+                $("#cell-" + i + "-" + j).css({
+                    "background":"Green url(\"images/flag.png\") no-repeat center",
                     "background-size":(cellSize - 15 + "px")
                 });
             }
@@ -333,4 +353,17 @@ function refreshBoard() {
 
     $("#bomb-count").children("span").html(numMines);
     $("#flag-count").children("span").html(numFlags);
+}
+
+function getTextColor(value) {
+    switch (value) {
+        case 1: return "Navy";
+        case 2: return "DarkGreen";
+        case 3: return "Sienna";
+        case 4: return "Purple";
+        case 5: return "Maroon";
+        case 6: return "Teal";
+        case 7: return "Black";
+        case 8: return "DimGray";
+    }
 }
