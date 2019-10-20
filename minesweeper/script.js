@@ -6,6 +6,7 @@ var cellSize = 75;
 
 var gameOver, gameWon, numExposed, numFlags, numSpotted, explodedCell;
 
+
 class Cell {
     constructor(row, col) {
         this.rowIndex = row;
@@ -17,6 +18,7 @@ class Cell {
         this.flagged = false;
     }
 }
+
 
 
 
@@ -62,6 +64,7 @@ $(document).mousedown(function(event) {
         }
     }
 });
+
 
 
 
@@ -184,6 +187,7 @@ function printGrid() {
 
 
 
+
 // cell specific
 
 function createCell(row, col) {
@@ -216,6 +220,15 @@ function placeFlag(row, col) {
     }
     
 }
+
+function explodeMine(row, col) {
+    gameOver = true;
+    gameWon = false;
+    
+    grid[row][col].exposed = true;
+    explodedCell = [row, col];
+}
+
 
 
 
@@ -263,13 +276,6 @@ function checkGame() {
     if (gameOver)   exposeAll();
 }
 
-function explodeMine(row, col) {
-    gameOver = true;
-    gameWon = false;
-    
-    grid[row][col].exposed = true;
-    explodedCell = [row, col];
-}
 
 
 
