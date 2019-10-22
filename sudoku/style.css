@@ -3,7 +3,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    position: absolute;
+    position: relative;
     line-height: 1rem;
     display: flex;
     flex-direction: column;
@@ -17,22 +17,138 @@ body {
 }
 
 
+#status {
+    width: 100%;
+    height: 48px;
+    box-sizing: border-box;
+    border: 4px solid #000;
+    border-bottom: none;
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    background: indigo;
+}
+
+#status span {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: whitesmoke;
+}
+
+
+#num-grid {
+    position: relative;
+}
+
 #board {
     width: 675px;
-    height: 100%;
-    background: #ff0;
+    height: 675px;
+    border: 2px solid #000;
+    position: relative;
+    background: #f00;
 }
 
 .cell {
     width: 75px;
     height: 75px;
     box-sizing: border-box;
-    padding: 15px;
+    padding: 10px;
     margin: 0;
+    border: 2px solid rgba(0, 0, 0, 1);
+    position: relative;
+    display: block;
+    float: left;
+    background: beige;
+}
+
+.cell-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.hints-grid {
+    width: 51px;
+    height: 51px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cell-hint {
+    width: 17px;
+    height: 17px;
     display: inline-block;
-    background: #f00;
+    text-align: center;
 }
 
 .hint span {
     font-size: 0.5rem;
+}
+
+
+
+#num-row {
+    width: 100%;
+    height: 80px;
+    box-sizing: border-box;
+    border: 4px solid #000;
+    border-top: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background: whitesmoke;
+}
+
+#mode {
+    width: 64px;
+    height: 48px;
+    border-radius: 8px;
+    margin-right: 16px;
+    background: #040;
+}
+
+#buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.btn-num {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 2px solid #08f;
+    margin: 4px;
+    background: wheat;
+}
+
+.btn-val {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+
+#borders {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+.box-border {
+    width: 225px;
+    height: 225px;
+    box-sizing: border-box;
+    border: 2px solid #00f;
+    float: left;
+    top: 0;
 }
