@@ -60,7 +60,7 @@ body {
     font-weight: 700;
     position: absolute;
     left: 50%;
-    top: 40%;
+    top: 50%;
     transform: translate(-50%, -50%);
     color: whitesmoke;
 }
@@ -86,9 +86,32 @@ body {
     background-size: 24px 24px;
 }
 
+#btn-hint:after {
+    width: 34px;
+    height: 34px;
+    content: "";
+    display: table;
+    border-radius: 4px;
+    background: rgb(150, 150, 150, 0.5);
+    /*visibility: hidden;*/
+}
+
 
 #num-grid {
     position: relative;
+}
+
+#num-grid:after {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 672px;
+    height: 672px;
+    content: "";
+    display: table;
+    border-radius: 4px;
+    background: rgb(135, 206, 235, 0.5);
+    /*visibility: hidden;*/
 }
 
 #board {
@@ -172,6 +195,16 @@ body {
     background-size: 32px 32px;
 }
 
+#mode:after {
+    width: 44px;
+    height: 44px;
+    content: "";
+    display: table;
+    border-radius: 4px;
+    background: rgba(150, 150, 150, 0.5);
+    /*visibility: hidden;*/
+}
+
 #buttons {
     display: flex;
     flex-direction: row;
@@ -193,8 +226,20 @@ body {
 }
 
 .btn-num:hover,
-.btn_num:active {
+.btn-num:active {
     background: beige;
+}
+
+.btn-num:after {
+    position: absolute;
+
+    width: 44px;
+    height: 44px;
+    content: "";
+    display: table;
+    border-radius: 4px;
+    background: rgba(150, 150, 150, 0.5);
+    /*visibility: hidden;*/
 }
 
 .btn-val {
@@ -220,4 +265,14 @@ body {
 #erase:active {
     background: mistyrose url("images/erase.png") no-repeat center;
     background-size: 36px 36px;
+}
+
+#erase:after {
+    width: 44px;
+    height: 44px;
+    content: "";
+    display: table;
+    border-radius: 4px;
+    background: rgba(150, 150, 150, 0.5);
+    /*visibility: hidden;*/
 }
