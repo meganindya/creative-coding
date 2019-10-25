@@ -553,6 +553,14 @@ function refreshBoard() {
         $("#status-val").html("Game over");
     else
         $("#status-val").html("Running");
+    
+
+    
+    $("#btn-hint").after().css("visibility", "visible");
+    $("#num-grid").after().css("visibility", "visible");
+    $("#btn-hint").after().css("visibility", "visible");
+    $("#btn-hint").after().css("visibility", "visible");
+    $("#btn-hint").after().css("visibility", "visible");
 }
 
 
