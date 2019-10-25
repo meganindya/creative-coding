@@ -394,7 +394,8 @@ $(document).click(function(event) {
             if (cell.value != 0) {
                 numCount[cell.value - 1]--;
                 numFilled--;
-
+                
+                cell.hintPlaced = false;
                 cell.value = 0;
             }
 
@@ -505,6 +506,10 @@ function setupRender() {
                 board.id = "board";
             numgrid.appendChild(board);
 
+            var overlay = document.createElement("div");
+                overlay.id = "overlay";
+            numgrid.appendChild(overlay);
+
                 for (var i = 0; i < 9; i++) {
                     for (var j = 0; j < 9; j++) {
                         createCell(i, j);
@@ -551,19 +556,19 @@ function setupRender() {
             var temp = $("#cell-" + i + "-" + j);
 
             if (i == 2 || i == 5) {
-                temp.css("border-bottom", "4px solid indigo");
+                temp.css("border-bottom", "4px solid gray");
             }
 
             else if (i == 3 || i == 6) {
-                temp.css("border-top", "4px solid indigo");
+                temp.css("border-top", "4px solid gray");
             }
 
             if (j == 2 || j == 5) {
-                temp.css("border-right", "4px solid indigo");
+                temp.css("border-right", "4px solid gray");
             }
 
             else if (j == 3 || j == 6) {
-                temp.css("border-left", "4px solid indigo");
+                temp.css("border-left", "4px solid gray");
             }
         }
     }
@@ -599,8 +604,6 @@ function createCell(row, col) {
 // draws dynamic elements according to parameters
 
 function refreshBoard() {
-    console.log(numCount);
-    
     // draws cells
 
     for (var i = 0; i < 9; i++) {
@@ -613,17 +616,19 @@ function refreshBoard() {
             if (!grid[i][j].writable)
                 $("#cell-" + i + "-" + j).css({
                     "background":"beige",
-                    "color":"black"
+                    "color":"midnightblue"
                 });
             
             else {
+                $("#cell-" + i + "-" + j).css("cursor", "pointer");
+
                 if (grid[i][j].isValWrong)
                     $("#value-" + i + "-" + j).css("color", "firebrick");
                 else
                     $("#value-" + i + "-" + j).css("color", "darkgreen");
                 
                 if (grid[i][j].hintPlaced)
-                    $("#value-" + i + "-" + j).css("color", "dimgray");
+                    $("#value-" + i + "-" + j).css("color", "darkcyan");
             }
 
 
@@ -658,6 +663,11 @@ function refreshBoard() {
                             $("#guess-" + i + "-" + j + "-" + m + "-" + n).css({
                                 "visibility":"visible"
                             });
+                        
+                        else
+                            $("#guess-" + i + "-" + j + "-" + m + "-" + n).css({
+                                "visibility":"hidden"
+                            });
                     }
                 }
             }
@@ -668,7 +678,7 @@ function refreshBoard() {
     // draw selected cell
 
     $("#cell-" + selectedCell[0] + "-" + selectedCell[1]).css({
-        "box-shadow":"0 0 3px 4px darkslategrey inset"
+        "box-shadow":"0 0 3px 4px royalblue inset"
     });
 
 
@@ -699,4 +709,34 @@ function refreshBoard() {
         $("#status").html("COMPLETE");
     else
         $("#status").html("RUNNING");
+    
+    
+    
+    // draw game end cover over number grid
+
+    if (gameover || complete) {
+        $("#overlay").css("visibility", "visible");
+        
+        $(".num-bar-btn").css({
+            "box-shadow":"0 0 0 0 #000",
+            "cursor":"default"
+        });
+
+        $("#btn-hint").css({
+            "cursor":"default"
+        });
+    }
+
+    else {
+        $("#overlay").css("visibility", "hidden");
+
+        $(".num-bar-btn.hover").css({
+            "box-shadow":"0 0 2px #000",
+            "cursor":"pointer"
+        });
+
+        $("#btn-hint").css({
+            "cursor":"pointer"
+        });
+    }
 }
