@@ -20,7 +20,8 @@ class Cell {
 
         this.writable   = true;
         this.isGuessed  = false;
-        this.valCorrect = false;
+        this.isValWrong = false;
+        this.hintPlaced = false;
     }
 }
 
@@ -42,8 +43,6 @@ var numCount;                // stores count of each number' presence
 
 var complete;               // stores whether game is complete (won)
 var gameover;               // stores whether game is over (lost)
-
-var wrongValFound;          // stores whether newly entered value is invalid
 
 
 
@@ -168,7 +167,7 @@ function checkIfValid(row, col) {
         if (i == col)   continue;
 
         if (grid[row][i].value == grid[row][col].value) {
-            wrongValFound = true;
+            grid[row][col].isValWrong = true;
             wrongCount++;
 
             return;
@@ -182,7 +181,7 @@ function checkIfValid(row, col) {
         if (i == row)   continue;
 
         if (grid[i][col].value == grid[row][col].value) {
-            wrongValFound = true;
+            grid[row][col].isValWrong = true;
             wrongCount++;
 
             return;
@@ -200,7 +199,7 @@ function checkIfValid(row, col) {
             if ((srow + i) == row && (scol + j) == col) continue;
 
             if (grid[srow + i][scol + j].value == grid[row][col].value) {
-                wrongValFound = true;
+                grid[row][col].isValWrong = true;
                 wrongCount++;
 
                 return;
@@ -208,12 +207,7 @@ function checkIfValid(row, col) {
         }
     }
 
-
-
-    if (wrongValFound)
-        $("#value-" + row + "-" + col).css("color", "firebrick");
-    else
-        $("#value-" + row + "-" + col).css("color", "darkgreen");
+    grid[row][col].isValWrong = false;
 }
 
 
@@ -298,6 +292,7 @@ function hintExpose() {
 
     // fills spotted cell with correct value
     grid[row][col].value = finalVals[row][col];
+    grid[row][col].hintPlaced = true;
     hintsTaken++;
 
     numCount[finalVals[row][col] - 1]++;
@@ -321,7 +316,7 @@ $(document).click(function(event) {
 
     // reset button
 
-    if (curr.attr('id') == "reset") {
+    if (curr.attr('id') == "btn-reset") {
         reset();
         refreshBoard();
     }
@@ -342,7 +337,7 @@ $(document).click(function(event) {
 
     // input mode button
 
-    else if (curr.attr('id') == "mode") {
+    else if (curr.attr('id') == "btn-mode") {
         isValueMode = !isValueMode;
         refreshBoard();
     }
@@ -350,7 +345,7 @@ $(document).click(function(event) {
 
     // erase button
 
-    else if (curr.attr('id') == "erase") {
+    else if (curr.attr('id') == "btn-erase") {
         var cell = grid[selectedCell[0]][selectedCell[1]];
 
         if (cell.value != 0) {
@@ -395,12 +390,19 @@ $(document).click(function(event) {
                 cell.guess[i] = false;
             cell.isGuessed = false;
 
+            // remove cell value
+            if (cell.value != 0) {
+                numCount[cell.value - 1]--;
+                numFilled--;
+
+                cell.value = 0;
+            }
+
             // enter cell value
             cell.value = btnNum;
 
             numCount[btnNum - 1]++;
             numFilled++;
-
 
             checkIfValid(selectedCell[0], selectedCell[1]);
 
@@ -473,26 +475,26 @@ $(document).click(function(event) {
 
 function setupRender() {
     var wrapper = document.createElement("div");
-        wrapper.id = "outer";
+        wrapper.id = "wrapper";
         wrapper.className = "clearfix";
     document.body.appendChild(wrapper);
 
-        var status = document.createElement("div");
-            status.id = "status";
-        wrapper.appendChild(status);
+        var header = document.createElement("div");
+            header.id = "head-bar";
+        wrapper.appendChild(header);
 
             var reset = document.createElement("div");
-                reset.id = "reset";
-            status.appendChild(reset);
+                reset.id = "btn-reset";
+            header.appendChild(reset);
 
-            var status_span = document.createElement("span");
-                status_span.id = "status-val";
-                status_span.innerHTML = "Running";
-            status.appendChild(status_span);
+            var status = document.createElement("span");
+                status.id = "status";
+                status.innerHTML = "Running";
+            header.appendChild(status);
 
             var hint = document.createElement("div");
                 hint.id = "btn-hint";
-            status.appendChild(hint);
+            header.appendChild(hint);
 
 
         var numgrid = document.createElement("div");
@@ -510,33 +512,35 @@ function setupRender() {
                 }
 
 
-        var numrow = document.createElement("div");
-            numrow.id = "num-row";
-        wrapper.appendChild(numrow);
+        var numbar = document.createElement("div");
+            numbar.id = "num-bar";
+        wrapper.appendChild(numbar);
 
             var mode = document.createElement("div");
-                mode.id = "mode";
-            numrow.appendChild(mode);
+                mode.className = "num-bar-btn";
+                mode.id = "btn-mode";
+            numbar.appendChild(mode);
 
             var buttons = document.createElement("div");
-                buttons.id = "buttons";
-            numrow.appendChild(buttons);
+                buttons.id = "num-buttons";
+            numbar.appendChild(buttons);
 
                 for (var i = 0; i < 9; i++) {
-                    var btn_num = document.createElement("div");
-                        btn_num.id = "btn-" + (i + 1);
-                        btn_num.className = "btn-num";
-                    buttons.appendChild(btn_num);
+                    var btnNum = document.createElement("div");
+                        btnNum.id = "btn-" + (i + 1);
+                        btnNum.className = "btn-num num-bar-btn";
+                    buttons.appendChild(btnNum);
 
-                        var btn_val = document.createElement("span");
-                            btn_val.className = "btn-val";
-                            btn_val.innerHTML = i + 1 + "";
-                        btn_num.appendChild(btn_val);
+                        var btnVal = document.createElement("span");
+                            btnVal.className = "btn-value";
+                            btnVal.innerHTML = i + 1 + "";
+                        btnNum.appendChild(btnVal);
                 }
 
             var erase = document.createElement("div");
-                erase.id = "erase";
-            numrow.appendChild(erase);
+                erase.className = "num-bar-btn";
+                erase.id = "btn-erase";
+            numbar.appendChild(erase);
 
 
 
@@ -577,14 +581,14 @@ function createCell(row, col) {
         cell.appendChild(value);
 
         var guesses = document.createElement("div");
-            guesses.className = "hints-grid";
+            guesses.className = "guess-grid";
         cell.appendChild(guesses);
 
             for (var i = 0; i < 3; i++) {
                 for (var j = 0; j < 3; j++) {
                     var guess = document.createElement("span");
-                        guess.className = "cell-hint";
-                        guess.id = "hint-" + row + "-" + col + "-" + i + "-" + j;
+                        guess.className = "guess-value";
+                        guess.id = "guess-" + row + "-" + col + "-" + i + "-" + j;
                         guess.innerHTML = 1 + (i * 3) + j + "";
                     guesses.appendChild(guess);
                 }
@@ -595,6 +599,8 @@ function createCell(row, col) {
 // draws dynamic elements according to parameters
 
 function refreshBoard() {
+    console.log(numCount);
+    
     // draws cells
 
     for (var i = 0; i < 9; i++) {
@@ -609,8 +615,19 @@ function refreshBoard() {
                     "background":"beige",
                     "color":"black"
                 });
+            
+            else {
+                if (grid[i][j].isValWrong)
+                    $("#value-" + i + "-" + j).css("color", "firebrick");
+                else
+                    $("#value-" + i + "-" + j).css("color", "darkgreen");
+                
+                if (grid[i][j].hintPlaced)
+                    $("#value-" + i + "-" + j).css("color", "dimgray");
+            }
 
 
+                        
             // show value
             if (!grid[i][j].isGuessed) {
                 //write value
@@ -622,7 +639,7 @@ function refreshBoard() {
                 // remove guesses
                 for (var m = 0; m < 3; m++) {
                     for (var n = 0; n < 3; n++) {
-                        $("#hint-" + i + "-" + j + "-" + m + "-" + n).css({
+                        $("#guess-" + i + "-" + j + "-" + m + "-" + n).css({
                             "visibility":"hidden"
                         });
                     }
@@ -638,7 +655,7 @@ function refreshBoard() {
                 for (var m = 0; m < 3; m++) {
                     for (var n = 0; n < 3; n++) {
                         if (grid[i][j].guess[(3 * m) + n])
-                            $("#hint-" + i + "-" + j + "-" + m + "-" + n).css({
+                            $("#guess-" + i + "-" + j + "-" + m + "-" + n).css({
                                 "visibility":"visible"
                             });
                     }
@@ -647,7 +664,7 @@ function refreshBoard() {
         }
     }
 
-
+    
     // draw selected cell
 
     $("#cell-" + selectedCell[0] + "-" + selectedCell[1]).css({
@@ -660,16 +677,16 @@ function refreshBoard() {
 
     // value mode
     if (isValueMode)
-        $("#mode").css({
+        $("#btn-mode").css({
             "background":"oldlace url(\"images/write.png\") no-repeat center",
-            "background-size":"32px 32px"
+            "background-size":"26px 26px"
         });
 
     // guess mode
     else
-        $("#mode").css({
+        $("#btn-mode").css({
             "background":"oldlace url(\"images/hint.png\") no-repeat center",
-            "background-size":"32px 32px"
+            "background-size":"26px 26px"
         });
 
 
@@ -677,9 +694,9 @@ function refreshBoard() {
     // status bar text
 
     if (gameover)
-        $("#status-val").html("Game over");
+        $("#status").html("GAME OVER");
     else if (complete)
-        $("#status-val").html("Complete");
+        $("#status").html("COMPLETE");
     else
-        $("#status-val").html("Running");
+        $("#status").html("RUNNING");
 }
