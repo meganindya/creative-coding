@@ -4,6 +4,7 @@ var cellSize = 75;
 var selectedCell;
 var modeValue;
 
+var hintsTaken;
 var numFilled;
 var complete;
 var errorCount;
@@ -50,6 +51,11 @@ $(document).click(function(event) {
 
     if (curr.attr('id') == "mode") {
         modeValue = !modeValue;
+    }
+
+    if (curr.attr('id') == "btn-hint") {
+        hintExpose();
+        refreshBoard();
     }
 
     else if (curr.attr('id') == "erase") {
@@ -221,8 +227,78 @@ function matchBoard() {
     complete = true;
 }
 
+function hintExpose() {
+    if (hintsTaken == 3) {
+        gameover = true;
+        return;
+    }
+
+    var emptyCount = 0;
+    var wrongCount = 0;
+
+    for (var i = 0; i < 9; i++) {
+        for (var j = 0; j < 9; j++) {
+            if (grid[i][j].value == ans[i][j])
+                continue;
+            
+            
+            if (grid[i][j].value == 0)
+                emptyCount++;
+            
+            else if (grid[i][j].value != ans[i][j])
+                wrongCount++;
+        }
+    }
+    
+
+    if (emptyCount != 0) {
+        var temp = 1 + Math.floor((Math.random() * emptyCount));
+
+        var cnt = 0;
+        for (var i = 0; i < 9; i++) {
+            for (var j = 0; j < 9; j++) {
+                if (grid[i][j].value == 0) {
+                    cnt++;
+
+                    if (cnt == temp) {
+                        grid[i][j].value = ans[i][j];
+                        hintsTaken++;
+                        
+                        $("#value-" + i + "-" + j).css({
+                            "color":"gray"
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    else {
+        var temp = 1 + Math.random() * wrongCount;
+
+        var cnt = 0;
+        for (var i = 0; i < 9; i++) {
+            for (var j = 0; j < 9; j++) {
+                if (grid[i][j].value != ans[i][j]) {
+                    cnt++;
+
+                    if (cnt == temp) {
+                        grid[i][j].value = ans[i][j];
+                        hintsTaken++;
+                        
+                        $("#value-" + i + "-" + j).css({
+                            "color":"gray"
+                        });
+                    }
+                }
+            }
+        }
+    }
+}
+
 function reset() {
     modeValue = true;
+    hintsTaken = 0;
     numFilled = 0;
     complete = false;
     errorCount = 0;
