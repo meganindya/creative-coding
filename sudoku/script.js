@@ -556,11 +556,21 @@ function refreshBoard() {
     
 
     
-    $("#btn-hint").after().css("visibility", "visible");
-    $("#num-grid").after().css("visibility", "visible");
-    $("#btn-hint").after().css("visibility", "visible");
-    $("#btn-hint").after().css("visibility", "visible");
-    $("#btn-hint").after().css("visibility", "visible");
+    /*if (gameover) {
+        //$("#btn-hint").after().css("visibility", "visible");
+        //$("#num-grid").after().css("visibility", "visible");
+        //$("#mode").after().css("visibility", "visible");
+        //$("#btn-num").after().css("visibility", "visible");
+        $("#erase").after().css("visibility", "visible");
+    }
+
+    else {
+        //$("#btn-hint").after().css("visibility", "hidden");
+        //$("#num-grid").after().css("visibility", "hidden");
+        //$("#mode").after().css("visibility", "hidden");
+        //$("#btn-num").after().css("visibility", "hidden");
+        $("#erase").after().css("visibility", "hidden");
+    }*/
 }
 
 

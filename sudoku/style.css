@@ -103,6 +103,7 @@ body {
 
 #num-grid:after {
     position: absolute;
+    z-index: -100;
     top: 4px;
     left: 4px;
     width: 672px;
