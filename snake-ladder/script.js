@@ -1,5 +1,6 @@
 var jumpToCell;
 var jumps;
+var isSnake;
 
 var boardSize;
 var cellSize;
@@ -17,6 +18,7 @@ var playerPosJmp;
 var playerActive;
 
 var diceNum;
+var count6s;
 var repeatThrow;
 var diceLocked;
 
@@ -81,6 +83,14 @@ function initVars() {
         }
     }
 
+    isSnake = new Array(101);
+    for (var i = 1; i < 101; i++)
+        isSnake[i] = false;
+
+    isSnake[17] = isSnake[32] = isSnake[48] = true;
+    isSnake[57] = isSnake[61] = isSnake[65] = true;
+    isSnake[93] = isSnake[97] = isSnake[99] = true;
+
 
 
     boardSize = 2000 / 3;
@@ -106,6 +116,7 @@ function reset() {
     playerActive = [true, false];
 
     diceNum = 6;
+    count6s = 0;
     repeatThrow = true;
     diceLocked = false;
 
@@ -147,17 +158,14 @@ function diceRoll() {
     diceLocked = true;
     $('#dice').css('cursor', 'default');
 
-
     diceNum = 1 + Math.floor(Math.random() * 6);
     
-
 
 
     var activePlayer = playerActive[0] ? 0 : 1;
 
     if (playerStarted[activePlayer]) {
         playerPosOld[activePlayer] = playerPosJmp[activePlayer];
-
 
 
         var newPos = playerPosJmp[activePlayer] + diceNum;
@@ -176,12 +184,17 @@ function diceRoll() {
             playerPosNew[activePlayer] = newPos;
 
 
-
         if (jumpToCell[newPos] != undefined)
             playerPosJmp[activePlayer] = jumpToCell[newPos];
 
         else
             playerPosJmp[activePlayer] = playerPosNew[activePlayer];
+        
+        
+        if (diceNum == 6 && count6s != 3 && !isSnake(playerPosNew[activePlayer])) {
+            repeatThrow = true;
+            count6s++;
+        }
     }
 
     else if (!playerStarted[activePlayer] && diceNum == 6) {
@@ -284,12 +297,12 @@ function setupRender() {
 
 
 function animateDice() {
-    var diceAnimOrder = [4, 1, 3, 2, 5, 6];
+    var diceAnimOrder = [4, 1, 3, 2, 5, 6, 1, 4, 5, 3, 2, 6, 3];
     diceAnimOrder.push(diceNum);
     var animPos = 0;
 
     var diceAnim = setInterval(function () {
-        if (animPos == 7) {
+        if (animPos == diceAnimOrder.length) {
             clearInterval(diceAnim);
             
             animateMove();
@@ -300,7 +313,7 @@ function animateDice() {
                 'background': 'url(\'images/dice-' + diceAnimOrder[animPos++] + '.png\') no-repeat center',
                 'background-size': 'cover'
             });
-    }, 20);
+    }, 25);
 }
 
 
