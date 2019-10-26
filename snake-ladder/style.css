@@ -1,0 +1,114 @@
+/* VARIABLES */
+/* ================ */
+
+:root {
+  --board-size: calc(2000px / 3);
+  --cell-size: calc(var(--board-size) * 0.09);
+
+  --offset: calc(var(--board-size) * 0.05);
+  --init-left: calc(var(--offset) + (var(--cell-size) / 2));
+  --init-bottom: calc(var(--offset) + (var(--cell-size) / 2));
+
+  --player-size-sm: calc(var(--cell-size) * 0.4);
+  --player-size-bg: calc(var(--cell-size) * 0.5);
+}
+
+
+
+
+
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+}
+
+
+
+/* WRAPPER */
+/* ================ */
+
+#wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+/* HEAD BAR */
+/* ================ */
+
+#head-bar {
+
+}
+
+
+/* BOARD */
+/* ================ */
+
+#board {
+  width: var(--board-size);
+  height: var(--board-size);
+  position: relative;
+  background: url('images/board.png') no-repeat center;
+  background-size: cover;
+}
+
+.player {
+  width: var(--player-size-sm);
+  height: var(--player-size-sm);
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid blue;
+  position: absolute;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: white;
+  transition: all 300ms;
+}
+
+.player:hover,
+.player:active {
+  width: 30px;
+  height: 30px;
+  font-size: 1rem;
+}
+
+#player1 {
+  left: calc(var(--init-left) - calc(var(--player-size-sm) / 2));
+  bottom: calc(var(--init-bottom) - calc(var(--cell-size) / 30) - var(--player-size-sm));
+  background: indigo;
+}
+
+#player1:hover,
+#player1:active {
+  left: calc(var(--init-left) - calc(var(--player-size-sm) / 2) - calc((var(--player-size-bg) - var(--player-size-sm)) / 2));
+  bottom: calc(var(--init-bottom) - calc(var(--cell-size) / 30) - var(--player-size-sm) - calc((var(--player-size-bg) - var(--player-size-sm)) / 3));
+}
+
+#player2 {
+  left: calc(var(--init-left) - calc(var(--player-size-sm) / 2));
+  bottom: calc(var(--init-bottom) + calc(var(--cell-size) / 30));
+  background: darkslategray;
+}
+
+#player2:hover,
+#player2:active {
+  left: calc(var(--init-left) - calc(var(--player-size-sm) / 2) - calc((var(--player-size-bg) - var(--player-size-sm)) / 2));
+  bottom: calc(var(--init-bottom) + calc(var(--cell-size) / 30) - calc((var(--player-size-bg) - var(--player-size-sm)) / 3));
+}
+
+
+/* DICE */
+/* ================ */
+
+#dice {
+
+}
