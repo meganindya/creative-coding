@@ -167,7 +167,6 @@ function diceRoll() {
     else if (!playerStarted[activePlayer] && diceNum == 6) {
         playerStarted[activePlayer] = true;
 
-        diceRoll();
         return;
     }
 
