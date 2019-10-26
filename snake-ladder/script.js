@@ -9,6 +9,13 @@ var gameover;
 var winner;
 
 
+var boardSize;
+var cellSize;
+var boardOffset;
+var playerOffset;
+var playerSize;
+
+
 
 
 
@@ -31,6 +38,21 @@ function initVars() {
     jumpToCell[59] = 79; jumpToCell[61] = 37; jumpToCell[64] = 84;
     jumpToCell[65] = 50; jumpToCell[71] = 91; jumpToCell[75] = 95;
     jumpToCell[93] = 69; jumpToCell[97] = 78; jumpToCell[99] = 80;
+
+    
+    boardSize = 2000 / 3;
+    cellSize = boardSize * 0.09;
+    
+    boardOffset = boardSize * 0.05;
+    playerOffset = [
+        [boardOffset + (cellSize / 2), boardOffset + (cellSize / 2)],
+        [boardOffset + (cellSize / 2), boardOffset + (cellSize / 2)]
+    ];
+
+    playerSize = cellSize * 0.5;
+    playerOffset[0][0] -= playerSize / 2;
+    playerOffset[1][0] -= playerSize / 2;
+    playerOffset[0][1] -= playerSize;
 }
 
 function reset() {
@@ -111,7 +133,18 @@ function setupRender() {
 
 function refreshBoard() {
     $('#dice').css({
-        'background':'url(\'images/dice-' + diceNum + '.png\') no-repeat center',
+        'background': 'url(\'images/dice-' + diceNum + '.png\') no-repeat center',
         'background-size':'cover'
+    });
+
+
+    $('#player1').css({
+        'left': playerOffset[0][0],
+        'bottom': playerOffset[0][1]
+    });
+
+    $('#player2').css({
+        'left': playerOffset[1][0],
+        'bottom': playerOffset[1][1]
     });
 }
