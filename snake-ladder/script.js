@@ -109,6 +109,26 @@ $(document).click(function(event) {
 
 function diceRoll() {
     diceNum = 1 + Math.floor(Math.random() * 6);
+    
+    
+    var diceAnimOrder = [4, 1, 3, 2, 5, 6];
+    diceAnimOrder.push(diceNum);
+    
+    var animPos = 0;
+    
+    var diceAnim = setInterval(function () {
+        if (animPos == 7)
+            clearInterval(diceAnim);
+        
+        else
+            $('#dice').css({
+                'background': 'url(\'images/dice-' + diceAnimOrder[animPos++] + '.png\') no-repeat center',
+                'background-size': 'cover'
+            });
+    }, 20);
+
+    
+    
 
     var activePlayer;
     if (playerActive[0])    activePlayer = 0;
@@ -156,6 +176,7 @@ function diceRoll() {
 
     playerActive = [!playerActive[0], !playerActive[1]];
 }
+
 
 function getCoordFromPos(pos) {
     var row, col;
@@ -241,12 +262,6 @@ function refreshBoard() {
 
         $('#status').css('background', 'darkgreen');
     }
-
-
-    $('#dice').css({
-        'background': 'url(\'images/dice-' + diceNum + '.png\') no-repeat center',
-        'background-size':'cover'
-    });
 
 
 
