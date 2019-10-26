@@ -1,22 +1,12 @@
-var jumpcell = new Array(101);
-jumpcell[ 2] = 22;
-jumpcell[ 9] = 29;
-jumpcell[17] =  5;
-jumpcell[20] = 41;
-jumpcell[32] =  8;
-jumpcell[36] = 56;
-jumpcell[48] = 26;
-jumpcell[49] = 72;
-jumpcell[57] = 46;
-jumpcell[59] = 79;
-jumpcell[61] = 37;
-jumpcell[64] = 84;
-jumpcell[65] = 50;
-jumpcell[71] = 91;
-jumpcell[75] = 95;
-jumpcell[93] = 69;
-jumpcell[97] = 78;
-jumpcell[99] = 80;
+var jumpToCell;
+var playerPosOld;
+var playerPosNew;
+var playerActive;
+
+var diceNum;
+
+var gameover;
+var winner;
 
 
 
@@ -24,9 +14,61 @@ jumpcell[99] = 80;
 
 
 
-
-$('document').ready(function() {
+$(document).ready(function() {
+    initVars();
+    reset();
+    
     setupRender();
+    refreshBoard();
+});
+
+function initVars() {
+    jumpToCell = new Array(101);
+
+    jumpToCell[ 2] = 22; jumpToCell[ 9] = 29; jumpToCell[17] =  5;
+    jumpToCell[20] = 41; jumpToCell[32] =  8; jumpToCell[36] = 56;
+    jumpToCell[48] = 26; jumpToCell[49] = 72; jumpToCell[57] = 46;
+    jumpToCell[59] = 79; jumpToCell[61] = 37; jumpToCell[64] = 84;
+    jumpToCell[65] = 50; jumpToCell[71] = 91; jumpToCell[75] = 95;
+    jumpToCell[93] = 69; jumpToCell[97] = 78; jumpToCell[99] = 80;
+}
+
+function reset() {
+    playerPosOld = [undefined, undefined];
+    playerPosNew = [1, 1];
+    playerActive = [true, false];
+
+    diceNum = 6;
+
+    gameover = false;
+    winner = undefined;
+}
+
+
+
+
+
+
+
+$(document).click(function(event) {
+    var curr = $(event.target);
+
+    if (curr.attr('id') == 'dice') {
+        diceNum = 1 + Math.floor(Math.random() * 6);
+
+        /*playerPosOld = playerPosNew;
+
+        var activePlayer;
+        if (playerActive[0])    activePlayer = 0;
+        else                    activePlayer = 1;
+
+        var newPos = Math.min(playerPosNew[activePlayer] + dice, 100);*/
+
+
+        playerActive = [!playerActive[0], !playerActive[1]];
+    }
+
+    refreshBoard();
 });
 
 
@@ -64,4 +106,12 @@ function setupRender() {
         var dice = document.createElement('div');
             dice.id = 'dice';
         wrapper.appendChild(dice);
+}
+
+
+function refreshBoard() {
+    $('#dice').css({
+        'background':'url(\'images/dice-' + diceNum + '.png\') no-repeat center',
+        'background-size':'cover'
+    });
 }
