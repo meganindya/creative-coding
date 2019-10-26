@@ -39,7 +39,7 @@ function initVars() {
     jumpToCell[65] = 50; jumpToCell[71] = 91; jumpToCell[75] = 95;
     jumpToCell[93] = 69; jumpToCell[97] = 78; jumpToCell[99] = 80;
 
-    
+
     boardSize = 2000 / 3;
     cellSize = boardSize * 0.09;
     
@@ -76,22 +76,56 @@ $(document).click(function(event) {
     var curr = $(event.target);
 
     if (curr.attr('id') == 'dice') {
-        diceNum = 1 + Math.floor(Math.random() * 6);
-
-        /*playerPosOld = playerPosNew;
-
-        var activePlayer;
-        if (playerActive[0])    activePlayer = 0;
-        else                    activePlayer = 1;
-
-        var newPos = Math.min(playerPosNew[activePlayer] + dice, 100);*/
-
-
-        playerActive = [!playerActive[0], !playerActive[1]];
+        diceRoll();
     }
 
     refreshBoard();
 });
+
+
+
+
+
+
+
+
+function diceRoll() {
+    diceNum = 1 + Math.floor(Math.random() * 6);
+
+    var activePlayer;
+    if (playerActive[0])    activePlayer = 0;
+    else                    activePlayer = 1;
+
+    
+    playerPosOld[0] = playerPosNew[0];
+    playerPosOld[1] = playerPosNew[1];
+    
+    var newPos = playerPosNew[activePlayer] + diceNum;
+    playerPosNew[activePlayer] = newPos;
+
+
+    playerActive = [!playerActive[0], !playerActive[1]];
+}
+
+function getCoordFromPos(pos) {
+    var row, col;
+
+    if (pos % 10 == 0) {
+        row = Math.floor(pos / 10) - 1;
+
+        if (row % 2 == 0)   col = 9;
+        else                col = 0;
+    }
+
+    else {
+        row = Math.floor(pos / 10);
+
+        if (row % 2 == 0)   col = (pos % 10) - 1;
+        else                col = 10 - (pos % 10);
+    }
+
+    return [row, col];
+}
 
 
 
@@ -138,13 +172,17 @@ function refreshBoard() {
     });
 
 
+    var playerCoordinate;
+
+    playerCoordinate = getCoordFromPos(playerPosNew[0]);
     $('#player1').css({
-        'left': playerOffset[0][0],
-        'bottom': playerOffset[0][1]
+        'left': playerOffset[0][0] + playerCoordinate[1] * cellSize,
+        'bottom': playerOffset[0][1] + playerCoordinate[0] * cellSize
     });
 
+    playerCoordinate = getCoordFromPos(playerPosNew[1]);
     $('#player2').css({
-        'left': playerOffset[1][0],
-        'bottom': playerOffset[1][1]
+        'left': playerOffset[1][0] + playerCoordinate[1] * cellSize,
+        'bottom': playerOffset[1][1] + playerCoordinate[0] * cellSize
     });
 }

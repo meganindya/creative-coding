@@ -44,7 +44,7 @@ body {
 /* ================ */
 
 #head-bar {
-
+  visibility: hidden;
 }
 
 
@@ -77,14 +77,10 @@ body {
 }
 
 #player1 {
-  left: calc(var(--init-left) - calc(var(--player-size) / 2));
-  bottom: calc(var(--init-bottom) - var(--player-size));
   background: indigo;
 }
 
 #player2 {
-  left: calc(var(--init-left) - calc(var(--player-size) / 2));
-  bottom: var(--init-bottom);
   background: darkslategray;
 }
 
