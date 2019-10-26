@@ -12,6 +12,7 @@ var playerSize;
 var playerStarted;
 var playerPosOld;
 var playerPosNew;
+var playerPosJmp;
 var playerActive;
 
 var diceNum;
@@ -64,6 +65,7 @@ function reset() {
     playerStarted = [false, false];
     playerPosOld = [undefined, undefined];
     playerPosNew = [1, 1];
+    playerPosJmp = [undefined, undefined];
     playerActive = [true, false];
 
     diceNum = 6;
@@ -80,6 +82,11 @@ function reset() {
 
 $(document).click(function(event) {
     var curr = $(event.target);
+
+    if (curr.attr('id') == 'reset') {
+        reset();
+        refreshBoard();
+    }
 
     if (gameover)   return;
 
@@ -175,6 +182,10 @@ function setupRender() {
                 reset.id = 'reset';
             headbar.appendChild(reset);
 
+            var status = document.createElement('div');
+                status.id = 'status';
+            headbar.appendChild(status);
+
         var board = document.createElement('div');
             board.id = 'board';
         wrapper.appendChild(board);
@@ -198,6 +209,25 @@ function setupRender() {
 
 
 function refreshBoard() {
+    if (!gameover) {
+        if (playerActive[0])
+            $('#status').html("TURN&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;1");
+        else
+            $('#status').html("TURN&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;2");
+
+        $('#status').css('background', 'midnightblue');
+    }
+
+    else {
+        if (winner == 0)
+            $('#status').html("WINNER&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;1");
+        else
+            $('#status').html("WINNER&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;2");
+
+        $('#status').css('background', 'darkgreen');
+    }
+
+
     $('#dice').css({
         'background': 'url(\'images/dice-' + diceNum + '.png\') no-repeat center',
         'background-size':'cover'
