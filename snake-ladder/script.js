@@ -1,4 +1,5 @@
 var jumpToCell;
+var jumps;
 
 var boardSize;
 var cellSize;
@@ -16,9 +17,13 @@ var playerPosJmp;
 var playerActive;
 
 var diceNum;
+var repeatThrow;
+var diceLocked;
 
 var gameover;
 var winner;
+
+
 
 
 
@@ -37,6 +42,7 @@ $(document).ready(function() {
 
 function initVars() {
     jumpToCell = new Array(101);
+    jumps = new Array(101);
 
     jumpToCell[ 2] = 22; jumpToCell[ 9] = 29; jumpToCell[20] = 41;
     jumpToCell[36] = 56; jumpToCell[49] = 72; jumpToCell[59] = 79;
@@ -45,6 +51,36 @@ function initVars() {
     jumpToCell[17] =  5; jumpToCell[32] =  8; jumpToCell[48] = 26;
     jumpToCell[57] = 46; jumpToCell[61] = 37; jumpToCell[65] = 50;
     jumpToCell[93] = 69; jumpToCell[97] = 78; jumpToCell[99] = 80;
+    
+
+
+    jumps[ 2] = [19, 22];
+    jumps[ 9] = [12, 29];
+    jumps[20] = [21, 40, 41];
+    jumps[36] = [45, 56];
+    jumps[49] = [52, 69, 72];
+    jumps[59] = [62, 79];
+    jumps[64] = [77, 84];
+    jumps[71] = [90, 91];
+    jumps[75] = [86, 95];
+
+    jumps[17] = [16, 15, 14, 7, 6, 5];
+    jumps[32] = [31, 30, 11, 12, 13, 8];
+    jumps[48] = [47, 34, 35, 26];
+    jumps[57] = [44, 45, 46];
+    jumps[61] = [62, 63, 58, 43, 42, 39, 38, 37];
+    jumps[65] = [66, 55, 54, 53, 52, 51, 50];
+    jumps[93] = [94, 87, 88, 73, 74, 67, 68, 69];
+    jumps[97] = [96, 85, 76, 77, 78];
+    jumps[99] = [82, 81, 80];
+
+    for (var i = 1; i < 101; i++) {
+        if (jumps[i] != undefined) {
+            for (var j = 0; j < 2; j++)
+                jumps[i].unshift(i);
+        }
+    }
+
 
 
     boardSize = 2000 / 3;
@@ -64,12 +100,14 @@ function initVars() {
 
 function reset() {
     playerStarted = [false, false];
-    playerPosOld = [undefined, undefined];
+    playerPosOld = [1, 1];
     playerPosNew = [1, 1];
     playerPosJmp = [1, 1];
     playerActive = [true, false];
 
     diceNum = 6;
+    repeatThrow = true;
+    diceLocked = false;
 
     gameover = false;
     winner = undefined;
@@ -94,10 +132,8 @@ $(document).click(function(event) {
     if (gameover)   return;
 
     if (curr.attr('id') == 'dice') {
-        diceRoll();
+        if (!diceLocked)    diceRoll();
     }
-
-    refreshBoard();
 });
 
 
@@ -108,37 +144,21 @@ $(document).click(function(event) {
 
 
 function diceRoll() {
+    diceLocked = true;
+    $('#dice').css('cursor', 'default');
+
+
     diceNum = 1 + Math.floor(Math.random() * 6);
     
-    
-    var diceAnimOrder = [4, 1, 3, 2, 5, 6];
-    diceAnimOrder.push(diceNum);
-    
-    var animPos = 0;
-    
-    var diceAnim = setInterval(function () {
-        if (animPos == 7)
-            clearInterval(diceAnim);
-        
-        else
-            $('#dice').css({
-                'background': 'url(\'images/dice-' + diceAnimOrder[animPos++] + '.png\') no-repeat center',
-                'background-size': 'cover'
-            });
-    }, 20);
 
-    
-    
 
-    var activePlayer;
-    if (playerActive[0])    activePlayer = 0;
-    else                    activePlayer = 1;
 
+    var activePlayer = playerActive[0] ? 0 : 1;
 
     if (playerStarted[activePlayer]) {
         playerPosOld[activePlayer] = playerPosJmp[activePlayer];
 
-        
+
 
         var newPos = playerPosJmp[activePlayer] + diceNum;
 
@@ -147,8 +167,8 @@ function diceRoll() {
             winner = activePlayer;
 
             playerPosNew[activePlayer] = playerPosJmp[activePlayer] = 100;
-            playerActive = [!playerActive[0], !playerActive[1]];
 
+            animateDice();
             return;
         }
 
@@ -156,7 +176,7 @@ function diceRoll() {
             playerPosNew[activePlayer] = newPos;
 
 
-        
+
         if (jumpToCell[newPos] != undefined)
             playerPosJmp[activePlayer] = jumpToCell[newPos];
 
@@ -166,12 +186,11 @@ function diceRoll() {
 
     else if (!playerStarted[activePlayer] && diceNum == 6) {
         playerStarted[activePlayer] = true;
-
-        return;
+        repeatThrow = true;
     }
 
-
-    playerActive = [!playerActive[0], !playerActive[1]];
+    
+    animateDice();
 }
 
 
@@ -234,7 +253,7 @@ function setupRender() {
         var footbar = document.createElement('div');
             footbar.id = 'foot-bar';
         wrapper.appendChild(footbar);
-        
+
             var reset = document.createElement('div');
                 reset.id = 'reset';
             footbar.appendChild(reset);
@@ -246,36 +265,105 @@ function setupRender() {
             var turn = document.createElement('div');
                 turn.id = 'turn';
             footbar.appendChild(turn);
-            
+
             var dice = document.createElement('div');
                 dice.id = 'dice';
             footbar.appendChild(dice);
+    
+    
+    $('#player1').css({
+        'left': playerOffset[0][0],
+        'bottom': playerOffset[0][1]
+    });
+    
+    $('#player2').css({
+        'left': playerOffset[1][0],
+        'bottom': playerOffset[1][1]
+    });
+}
+
+
+function animateDice() {
+    var diceAnimOrder = [4, 1, 3, 2, 5, 6];
+    diceAnimOrder.push(diceNum);
+    var animPos = 0;
+
+    var diceAnim = setInterval(function () {
+        if (animPos == 7) {
+            clearInterval(diceAnim);
+            
+            animateMove();
+        }
+
+        else
+            $('#dice').css({
+                'background': 'url(\'images/dice-' + diceAnimOrder[animPos++] + '.png\') no-repeat center',
+                'background-size': 'cover'
+            });
+    }, 20);
+}
+
+
+function animateMove() {
+    var activePlayer = playerActive[0] ? 0 : 1;
+
+    var initPos = playerPosOld[activePlayer];
+    var finalPos = playerPosNew[activePlayer];
+    
+    var moveAnim = setInterval(function() {
+        if (initPos == finalPos) {
+            clearInterval(moveAnim);
+
+            animateJump();
+        }
+
+        else {
+            var playerCoordinate = getCoordFromPos(++initPos);
+            $('#player' + (activePlayer + 1) + '').css({
+                'left': playerOffset[activePlayer][0] + playerCoordinate[1] * cellSize,
+                'bottom': playerOffset[activePlayer][1] + playerCoordinate[0] * cellSize
+            });
+        }
+    }, 200);
+}
+
+function animateJump() {
+    var activePlayer = playerActive[0] ? 0 : 1;
+
+    if (playerPosNew[activePlayer] == playerPosJmp[activePlayer]) {
+        refreshBoard();
+        return;
+    }
+
+
+    var currPos = playerPosNew[activePlayer];
+    var jumpPos = jumps[currPos];
+    var jumpInd = 0;
+
+    var jumpAnim = setInterval(function() {
+        if (jumpInd == jumpPos.length) {
+            clearInterval(jumpAnim);
+            refreshBoard();
+        }
+    
+        else {
+            var playerCoordinate = getCoordFromPos(jumpPos[jumpInd++]);
+    
+            $('#player' + (activePlayer + 1) + '').css({
+                'left': playerOffset[activePlayer][0] + playerCoordinate[1] * cellSize,
+                'bottom': playerOffset[activePlayer][1] + playerCoordinate[0] * cellSize
+            });
+        }
+    }, 100);
 }
 
 
 function refreshBoard() {
-    if (!gameover) {
-        if (playerActive[0])
-            $('#turn').html("1");
-        else
-            $('#turn').html("2");
-        
-        $('#status').css('visibility', 'hidden');
-    }
+    if (!repeatThrow)
+        playerActive = [!playerActive[0], !playerActive[1]];
+    else
+        repeatThrow = false;
 
-    else {
-        if (winner == 0)
-            $('#status').html("WINNER&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;1");
-        else
-            $('#status').html("WINNER&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;2");
-        
-        $('#status').css('visibility', 'visible');
-    }
-
-
-
-    var activePlayer = playerActive[1] ? 0 : 1;
-    //console.log(playerActive[1] ? "P 1 >" : "P 2 >", playerPosOld[activePlayer], playerPosNew[activePlayer], playerPosJmp[activePlayer]);
 
 
     var playerCoordinate;
@@ -285,10 +373,38 @@ function refreshBoard() {
         'left': playerOffset[0][0] + playerCoordinate[1] * cellSize,
         'bottom': playerOffset[0][1] + playerCoordinate[0] * cellSize
     });
-
+    
     playerCoordinate = getCoordFromPos(playerPosJmp[1]);
     $('#player2').css({
         'left': playerOffset[1][0] + playerCoordinate[1] * cellSize,
         'bottom': playerOffset[1][1] + playerCoordinate[0] * cellSize
     });
+
+
+    $('#dice').css({
+        'background': 'url(\'images/dice-' + diceNum + '.png\') no-repeat center',
+        'background-size': 'cover'
+    });
+
+    
+    if (!gameover) {
+        if (playerActive[0])
+            $('#turn').html("1");
+        else
+            $('#turn').html("2");
+
+        $('#status').css('visibility', 'hidden');
+        $('#dice').css('cursor', 'pointer');
+    }
+
+    else {
+        if (winner == 0)
+            $('#status').html("WINNER&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;1");
+        else
+            $('#status').html("WINNER&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;2");
+
+        $('#status').css('visibility', 'visible');
+    }
+
+    diceLocked = false;
 }
