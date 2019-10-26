@@ -38,11 +38,12 @@ $(document).ready(function() {
 function initVars() {
     jumpToCell = new Array(101);
 
-    jumpToCell[ 2] = 22; jumpToCell[ 9] = 29; jumpToCell[17] =  5;
-    jumpToCell[20] = 41; jumpToCell[32] =  8; jumpToCell[36] = 56;
-    jumpToCell[48] = 26; jumpToCell[49] = 72; jumpToCell[57] = 46;
-    jumpToCell[59] = 79; jumpToCell[61] = 37; jumpToCell[64] = 84;
-    jumpToCell[65] = 50; jumpToCell[71] = 91; jumpToCell[75] = 95;
+    jumpToCell[ 2] = 22; jumpToCell[ 9] = 29; jumpToCell[20] = 41;
+    jumpToCell[36] = 56; jumpToCell[49] = 72; jumpToCell[59] = 79;
+    jumpToCell[64] = 84; jumpToCell[71] = 91; jumpToCell[75] = 95;
+
+    jumpToCell[17] =  5; jumpToCell[32] =  8; jumpToCell[48] = 26;
+    jumpToCell[57] = 46; jumpToCell[61] = 37; jumpToCell[65] = 50;
     jumpToCell[93] = 69; jumpToCell[97] = 78; jumpToCell[99] = 80;
 
 
@@ -65,7 +66,7 @@ function reset() {
     playerStarted = [false, false];
     playerPosOld = [undefined, undefined];
     playerPosNew = [1, 1];
-    playerPosJmp = [undefined, undefined];
+    playerPosJmp = [1, 1];
     playerActive = [true, false];
 
     diceNum = 6;
@@ -86,6 +87,8 @@ $(document).click(function(event) {
     if (curr.attr('id') == 'reset') {
         reset();
         refreshBoard();
+
+        return;
     }
 
     if (gameover)   return;
@@ -111,24 +114,36 @@ function diceRoll() {
     if (playerActive[0])    activePlayer = 0;
     else                    activePlayer = 1;
 
-    console.log(diceNum, playerActive[0] ? "Player 1" : "Player 2");
-
-
-    playerPosOld[0] = playerPosNew[0];
-    playerPosOld[1] = playerPosNew[1];
+    console.log(playerActive[0] ? "Player 1" : "Player 2", diceNum);
 
 
     if (playerStarted[activePlayer]) {
-        var newPos = playerPosNew[activePlayer] + diceNum;
-        if (newPos <= 100)
-            playerPosNew[activePlayer] = newPos;
+        playerPosOld[activePlayer] = playerPosJmp[activePlayer];
+
+        
+
+        var newPos = playerPosJmp[activePlayer] + diceNum;
 
         if (newPos == 100) {
             gameover = true;
             winner = activePlayer;
 
+            playerPosNew[activePlayer] = playerPosJmp[activePlayer] = 100;
+            playerActive = [!playerActive[0], !playerActive[1]];
+
             return;
         }
+
+        if (newPos <= 100)
+            playerPosNew[activePlayer] = newPos;
+
+
+        
+        if (jumpToCell[newPos] != undefined)
+            playerPosJmp[activePlayer] = jumpToCell[newPos];
+
+        else
+            playerPosJmp[activePlayer] = playerPosNew[activePlayer];
     }
 
     else if (!playerStarted[activePlayer] && diceNum == 6) {
@@ -234,15 +249,20 @@ function refreshBoard() {
     });
 
 
+
+    var activePlayer = playerActive[1] ? 0 : 1;
+    console.log(playerActive[1] ? "P 1 >" : "P 2 >", playerPosOld[activePlayer], playerPosNew[activePlayer], playerPosJmp[activePlayer]);
+
+
     var playerCoordinate;
 
-    playerCoordinate = getCoordFromPos(playerPosNew[0]);
+    playerCoordinate = getCoordFromPos(playerPosJmp[0]);
     $('#player1').css({
         'left': playerOffset[0][0] + playerCoordinate[1] * cellSize,
         'bottom': playerOffset[0][1] + playerCoordinate[0] * cellSize
     });
 
-    playerCoordinate = getCoordFromPos(playerPosNew[1]);
+    playerCoordinate = getCoordFromPos(playerPosJmp[1]);
     $('#player2').css({
         'left': playerOffset[1][0] + playerCoordinate[1] * cellSize,
         'bottom': playerOffset[1][1] + playerCoordinate[0] * cellSize
