@@ -134,8 +134,6 @@ function diceRoll() {
     if (playerActive[0])    activePlayer = 0;
     else                    activePlayer = 1;
 
-    console.log(playerActive[0] ? "Player 1" : "Player 2", diceNum);
-
 
     if (playerStarted[activePlayer]) {
         playerPosOld[activePlayer] = playerPosJmp[activePlayer];
@@ -214,10 +212,6 @@ function setupRender() {
             headbar.id = 'head-bar';
         wrapper.appendChild(headbar);
 
-            var reset = document.createElement('div');
-                reset.id = 'reset';
-            headbar.appendChild(reset);
-
             var status = document.createElement('div');
                 status.id = 'status';
             headbar.appendChild(status);
@@ -238,20 +232,36 @@ function setupRender() {
                 player2.innerHTML = '2';
             board.appendChild(player2);
 
-        var dice = document.createElement('div');
-            dice.id = 'dice';
-        wrapper.appendChild(dice);
+        var footbar = document.createElement('div');
+            footbar.id = 'foot-bar';
+        wrapper.appendChild(footbar);
+        
+            var reset = document.createElement('div');
+                reset.id = 'reset';
+            footbar.appendChild(reset);
+
+            var dicebox = document.createElement('div');
+                dicebox.id = 'dicebox';
+            footbar.appendChild(dicebox);
+
+            var turn = document.createElement('div');
+                turn.id = 'turn';
+            footbar.appendChild(turn);
+            
+            var dice = document.createElement('div');
+                dice.id = 'dice';
+            footbar.appendChild(dice);
 }
 
 
 function refreshBoard() {
     if (!gameover) {
         if (playerActive[0])
-            $('#status').html("TURN&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;1");
+            $('#turn').html("1");
         else
-            $('#status').html("TURN&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;2");
-
-        $('#status').css('background', 'midnightblue');
+            $('#turn').html("2");
+        
+        $('#status').css('visibility', 'hidden');
     }
 
     else {
@@ -259,14 +269,14 @@ function refreshBoard() {
             $('#status').html("WINNER&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;1");
         else
             $('#status').html("WINNER&nbsp;&nbsp;&nbsp;PLAYER&nbsp;&nbsp;2");
-
-        $('#status').css('background', 'darkgreen');
+        
+        $('#status').css('visibility', 'visible');
     }
 
 
 
     var activePlayer = playerActive[1] ? 0 : 1;
-    console.log(playerActive[1] ? "P 1 >" : "P 2 >", playerPosOld[activePlayer], playerPosNew[activePlayer], playerPosJmp[activePlayer]);
+    //console.log(playerActive[1] ? "P 1 >" : "P 2 >", playerPosOld[activePlayer], playerPosNew[activePlayer], playerPosJmp[activePlayer]);
 
 
     var playerCoordinate;
