@@ -11,6 +11,8 @@
 
   --player-size-sm: calc(var(--cell-size) * 0.4);
   --player-size-bg: calc(var(--cell-size) * 0.5);
+
+  --dice-size: calc(var(--cell-size) * 1.5);
 }
 
 
@@ -110,5 +112,10 @@ body {
 /* ================ */
 
 #dice {
-
+  width: var(--dice-size);
+  height: var(--dice-size);
+  margin: 0 auto;
+  background: url('images/dice-6.png') no-repeat center;
+  background-size: cover;
+  cursor: pointer;
 }
