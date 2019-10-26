@@ -1,13 +1,4 @@
 var jumpToCell;
-var playerPosOld;
-var playerPosNew;
-var playerActive;
-
-var diceNum;
-
-var gameover;
-var winner;
-
 
 var boardSize;
 var cellSize;
@@ -18,13 +9,27 @@ var playerSize;
 
 
 
+var playerStarted;
+var playerPosOld;
+var playerPosNew;
+var playerActive;
+
+var diceNum;
+
+var gameover;
+var winner;
+
+
+
+
+
 
 
 
 $(document).ready(function() {
     initVars();
     reset();
-    
+
     setupRender();
     refreshBoard();
 });
@@ -42,7 +47,7 @@ function initVars() {
 
     boardSize = 2000 / 3;
     cellSize = boardSize * 0.09;
-    
+
     boardOffset = boardSize * 0.05;
     playerOffset = [
         [boardOffset + (cellSize / 2), boardOffset + (cellSize / 2)],
@@ -56,6 +61,7 @@ function initVars() {
 }
 
 function reset() {
+    playerStarted = [false, false];
     playerPosOld = [undefined, undefined];
     playerPosNew = [1, 1];
     playerActive = [true, false];
@@ -74,6 +80,8 @@ function reset() {
 
 $(document).click(function(event) {
     var curr = $(event.target);
+
+    if (gameover)   return;
 
     if (curr.attr('id') == 'dice') {
         diceRoll();
@@ -96,12 +104,32 @@ function diceRoll() {
     if (playerActive[0])    activePlayer = 0;
     else                    activePlayer = 1;
 
-    
+    console.log(diceNum, playerActive[0] ? "Player 1" : "Player 2");
+
+
     playerPosOld[0] = playerPosNew[0];
     playerPosOld[1] = playerPosNew[1];
-    
-    var newPos = playerPosNew[activePlayer] + diceNum;
-    playerPosNew[activePlayer] = newPos;
+
+
+    if (playerStarted[activePlayer]) {
+        var newPos = playerPosNew[activePlayer] + diceNum;
+        if (newPos <= 100)
+            playerPosNew[activePlayer] = newPos;
+
+        if (newPos == 100) {
+            gameover = true;
+            winner = activePlayer;
+
+            return;
+        }
+    }
+
+    else if (!playerStarted[activePlayer] && diceNum == 6) {
+        playerStarted[activePlayer] = true;
+
+        diceRoll();
+        return;
+    }
 
 
     playerActive = [!playerActive[0], !playerActive[1]];
@@ -142,6 +170,10 @@ function setupRender() {
         var headbar = document.createElement('div');
             headbar.id = 'head-bar';
         wrapper.appendChild(headbar);
+
+            var reset = document.createElement('div');
+                reset.id = 'reset';
+            headbar.appendChild(reset);
 
         var board = document.createElement('div');
             board.id = 'board';
