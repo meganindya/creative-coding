@@ -18,7 +18,6 @@ var playerPosJmp;
 var playerActive;
 
 var diceNum;
-var count6s;
 var repeatThrow;
 var diceLocked;
 
@@ -115,8 +114,7 @@ function reset() {
     playerPosJmp = [1, 1];
     playerActive = [true, false];
 
-    diceNum = 6;
-    count6s = 0;
+    diceNum = 5;
     repeatThrow = true;
     diceLocked = false;
 
@@ -189,12 +187,6 @@ function diceRoll() {
 
         else
             playerPosJmp[activePlayer] = playerPosNew[activePlayer];
-        
-        
-        if (diceNum == 6 && count6s != 3 && !isSnake(playerPosNew[activePlayer])) {
-            repeatThrow = true;
-            count6s++;
-        }
     }
 
     else if (!playerStarted[activePlayer] && diceNum == 6) {
