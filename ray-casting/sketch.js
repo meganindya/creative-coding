@@ -2,20 +2,34 @@ let walls = [];
 let ray;
 let particle;
 
-let sceneW, sceneH;
+let sceneW, sceneH, isLandscape;
 function resetWinSize() {
     if (windowWidth > windowHeight) {
         sceneW = windowWidth / 2;
         sceneH = windowHeight + 4;
+        isLandscape = true;
     } else {
         sceneW = windowWidth;
         sceneH = windowHeight / 2 + 2;
+        isLandscape = false;
     }
 }
 
 function setup() {
     resetWinSize();
     createCanvas(windowWidth, windowHeight + 4);
+    addBoundaries();
+    particle = new Particle();
+}
+
+function windowResized() {
+    resetWinSize();
+    resizeCanvas(windowWidth, windowHeight + 4);
+    addBoundaries();
+    particle = new Particle();
+};
+
+function addBoundaries() {
     for (let i = 0; i < 5; i++) {
         let x1 = random(sceneW);
         let x2 = random(sceneW);
@@ -27,13 +41,7 @@ function setup() {
     walls.push(new Boundary(sceneW, 0, sceneW, sceneH));
     walls.push(new Boundary(sceneW, sceneH, 0, sceneH));
     walls.push(new Boundary(0, sceneH, 0, 0));
-    particle = new Particle();
 }
-
-function windowResized() {
-    resetWinSize();
-    resizeCanvas(windowWidth, windowHeight + 4);
-};
 
 function draw() {
     if (keyIsDown(LEFT_ARROW)) {
@@ -55,7 +63,11 @@ function draw() {
     const scene = particle.look(walls);
     const w = sceneW / scene.length;
     push();
-    translate(sceneW, 0);
+    if (isLandscape) {
+        translate(sceneW, 0);
+    } else {
+        translate(0, sceneH);
+    }
     for (let i = 0; i < scene.length; i++) {
         noStroke();
         const b = map(scene[i] * scene[i], 0, sceneW * sceneW, 255, 0);
