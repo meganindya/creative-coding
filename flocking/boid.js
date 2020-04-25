@@ -7,6 +7,7 @@ class Boid {
         this.acceleration = p.createVector();
         this.maxForce = 0.2;
         this.maxSpeed = 2;
+        this.vector = this.p.createVector(this.velocity.x, this.velocity.y);
     }
 
     edges() {
@@ -25,14 +26,15 @@ class Boid {
     visibleBoids(boids, perceptionRadius) {
         let visible = [];
         for (let boid of boids) {
-            let d = this.p.dist(
-                this.position.x,
-                this.position.y,
-                boid.position.x,
-                boid.position.y
-            );
+            let thisV = this.p.createVector(this.position.x, this.position.y);
+            let boidV = this.p.createVector(boid.position.x, boid.position.y);
+            let diff = p5.Vector.sub(boidV, thisV);
+
+            let d = diff.mag();
             if (boid != this && d < perceptionRadius) {
-                visible.push({ "obj" : boid, "d" : d });
+                let angle = this.vector.angleBetween(diff);
+                if (this.p.abs(angle) <= 165)
+                    visible.push({ "obj" : boid, "d" : d });
             }
         }
         return visible;
@@ -90,7 +92,7 @@ class Boid {
     }
 
     flock(boids) {
-        let visible = this.visibleBoids(boids, 75);
+        let visible = this.visibleBoids(boids, 100);
 
         let separation = this.separation(visible);
         let alignment = this.alignment(visible);
@@ -119,15 +121,16 @@ class Boid {
         this.p.push();
         this.p.translate(x, y);
 
-        let vector = this.p.createVector(this.velocity.x, this.velocity.y);
-        /*vector.setMag(20);
+        this.vector.x = this.velocity.x;
+        this.vector.y = this.velocity.y;
+        /*this.vector.setMag(20);
         this.p.stroke(0, 255, 0);
-        this.p.line(0, 0, vector.x, vector.y);*/
+        this.p.line(0, 0, this.vector.x, this.vector.y);*/
 
         this.p.noFill();
         this.p.stroke(255);
-        let ang = this.p.atan(vector.y / vector.x);
-        if (vector.x < 0)
+        let ang = this.p.atan(this.vector.y / this.vector.x);
+        if (this.vector.x < 0)
             ang += 180;
         this.p.rotate(ang);
         this.p.triangle(-2, 2, 4, 0, -2, -2);
