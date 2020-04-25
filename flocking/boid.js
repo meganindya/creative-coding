@@ -1,32 +1,33 @@
 class Boid {
-    constructor() {
-        this.position = createVector(random(width), random(height));
+    constructor(p) {
+        this.p = p;
+        this.position = p.createVector(p.random(p.width), p.random(p.height));
         this.velocity = p5.Vector.random2D();
-        this.velocity.setMag(random(2, 4));
-        this.acceleration = createVector();
+        this.velocity.setMag(p.random(2, 4));
+        this.acceleration = p.createVector();
         this.maxForce = 0.2;
         this.maxSpeed = 2;
     }
 
     edges() {
-        if (this.position.x > width) {
+        if (this.position.x > this.p.width) {
             this.position.x = 0;
         } else if (this.position.x < 0) {
-            this.position.x = width;
+            this.position.x = this.p.width;
         }
-        if (this.position.y > height) {
+        if (this.position.y > this.p.height) {
             this.position.y = 0;
         } else if (this.position.y < 0) {
-            this.position.y = height;
+            this.position.y = this.p.height;
         }
     }
 
     align(boids) {
         let perceptionRadius = 100;
-        let steering = createVector();
+        let steering = this.p.createVector();
         let total = 0;
         for (let other of boids) {
-            let d = dist(
+            let d = this.p.dist(
                 this.position.x,
                 this.position.y,
                 other.position.x,
@@ -48,10 +49,10 @@ class Boid {
 
     separation(boids) {
         let perceptionRadius = 50;
-        let steering = createVector();
+        let steering = this.p.createVector();
         let total = 0;
         for (let other of boids) {
-            let d = dist(
+            let d = this.p.dist(
                 this.position.x,
                 this.position.y,
                 other.position.x,
@@ -75,10 +76,10 @@ class Boid {
 
     cohesion(boids) {
         let perceptionRadius = 100;
-        let steering = createVector();
+        let steering = this.p.createVector();
         let total = 0;
         for (let other of boids) {
-            let d = dist(
+            let d = this.p.dist(
                 this.position.x,
                 this.position.y,
                 other.position.x,
@@ -104,9 +105,9 @@ class Boid {
         let cohesion = this.cohesion(boids);
         let separation = this.separation(boids);
 
-        alignment.mult(alignSlider.value());
-        cohesion.mult(cohesionSlider.value());
         separation.mult(separationSlider.value());
+        alignment.mult(alignmentSlider.value());
+        cohesion.mult(cohesionSlider.value());
 
         this.acceleration.add(alignment);
         this.acceleration.add(cohesion);
@@ -124,21 +125,21 @@ class Boid {
         let x = this.position.x;
         let y = this.position.y;
 
-        push();
-        translate(x, y);
+        this.p.push();
+        this.p.translate(x, y);
 
-        let vector = createVector(this.velocity.x, this.velocity.y);
+        let vector = this.p.createVector(this.velocity.x, this.velocity.y);
         /*vector.setMag(20);
-        stroke(0, 255, 0);
-        line(0, 0, vector.x, vector.y);*/
+        this.p.stroke(0, 255, 0);
+        this.p.line(0, 0, vector.x, vector.y);*/
 
-        noFill();
-        stroke(255);
-        let ang = atan(vector.y / vector.x);
+        this.p.noFill();
+        this.p.stroke(255);
+        let ang = this.p.atan(vector.y / vector.x);
         if (vector.x < 0)
-            ang += PI;
-        rotate(ang);
-        triangle(-2, 2, 4, 0, -2, -2);
-        pop();
+            ang += this.p.PI;
+        this.p.rotate(ang);
+        this.p.triangle(-2, 2, 4, 0, -2, -2);
+        this.p.pop();
     }
 }

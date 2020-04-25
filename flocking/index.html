@@ -6,8 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Flocking</title>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div id="canvas"></div>
+    <div class="sliders">
+      <div class="slider" id="separationSl">
+        <span>Separation</span>
+      </div>
+      <div class="slider" id="alignmentSl">
+        <span>Alignment</span>
+      </div>
+      <div class="slider" id="cohesionSl">
+        <span>Cohesion</span>
+      </div>
+    </div>
     <script src="boid.js"></script>
     <script src="sketch.js"></script>
-  </head>
-  <body style="margin: 0; overflow: hidden"></body>
+  </body>
 </html>

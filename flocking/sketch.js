@@ -1,34 +1,54 @@
-let flock = [];
 
-let alignSlider, cohesionSlider, separationSlider;
+let canvasWidth, canvasHeight;
+let getCanvasSize = () => {
+    canvasWidth = document.getElementById('canvas').offsetWidth;
+    canvasHeight = document.getElementById('canvas').offsetHeight;
+};
 
-function setup() {
-    createCanvas(windowWidth, windowHeight - 28);
-    alignSlider = createSlider(0, 2, 1, 0.1);
-    cohesionSlider = createSlider(0, 2, 1, 0.1);
-    separationSlider = createSlider(0, 2, 1, 0.1);
-    createBoids();
-}
+let alignmentSlider, cohesionSlider, separationSlider;
 
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
-    createBoids();
-}
+let sketch = p => {
+    let flock = [];
 
-function draw() {
-    background(51);
-    for (let boid of flock) {
-        boid.edges();
-        boid.flock(flock);
-        boid.update();
-        boid.show();
-    }
-}
+    p.setup = () => {
+        getCanvasSize();
+        p.createCanvas(canvasWidth, canvasHeight);
+        separationSlider = addSlider('separationSl');
+        alignmentSlider = addSlider('alignmentSl');
+        cohesionSlider = addSlider('cohesionSl');
+        createBoids();
+    };
 
-function createBoids() {
-    flock = [];
-    let boidCount = floor((100 * width * height) / (640 * 360));
-    for (let i = 0; i < min(200, boidCount); i++) {
-        flock.push(new Boid());
-    }
-}
+    p.windowResized = () => {
+        getCanvasSize();
+        p.resizeCanvas(canvasWidth, canvasHeight);
+        createBoids();
+    };
+
+    p.draw = () => {
+        p.background(51);
+        for (let boid of flock) {
+            boid.edges();
+            boid.flock(flock);
+            boid.update();
+            boid.show();
+        }
+    };
+
+    let createBoids = () => {
+        flock = [];
+        let boidCount = p.floor((100 * p.width * p.height) / (640 * 360));
+        for (let i = 0; i < p.min(200, boidCount); i++) {
+            flock.push(new Boid(p));
+        }
+    };
+
+    let addSlider = parent => {
+        let slider = p.createSlider(0, 2, 1, 0.2);
+        slider.addClass('slider');
+        slider.parent(parent);
+        return slider;
+    };
+};
+
+new p5(sketch, 'canvas');
