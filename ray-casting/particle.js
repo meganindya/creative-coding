@@ -4,7 +4,7 @@ class Particle {
         this.pos = createVector(sceneW / 2, sceneH / 2);
         this.rays = [];
         this.heading = 0;
-        for (let a = -this.fov / 2; a < this.fov / 2; a += 1) {
+        for (let a = -this.fov / 2; a < this.fov / 2; a += 0.1) {
             this.rays.push(new Ray(this.pos, radians(a)));
         }
     }
@@ -12,7 +12,7 @@ class Particle {
     rotate(angle) {
         this.heading += angle;
         let index = 0;
-        for (let a = -this.fov / 2; a < this.fov / 2; a += 1) {
+        for (let a = -this.fov / 2; a < this.fov / 2; a += 0.1) {
             this.rays[index].setAngle(radians(a) + this.heading);
             index++;
         }
@@ -46,7 +46,7 @@ class Particle {
                 }
             }
             if (closest) {
-                stroke(255, 100);
+                stroke(255, 15);
                 line(this.pos.x, this.pos.y, closest.x, closest.y);
             }
             scene[i] = record;
