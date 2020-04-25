@@ -13,9 +13,13 @@ let sketch = p => {
     p.setup = () => {
         getCanvasSize();
         p.createCanvas(canvasWidth, canvasHeight);
+
+        p.angleMode(p.DEGREES);
+
         separationSlider = addSlider('separationSl');
         alignmentSlider = addSlider('alignmentSl');
         cohesionSlider = addSlider('cohesionSl');
+
         createBoids();
     };
 
