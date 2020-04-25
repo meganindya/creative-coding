@@ -30,11 +30,32 @@ function windowResized() {
 };
 
 function addBoundaries() {
-    for (let i = 0; i < 5; i++) {
-        let x1 = random(sceneW);
-        let x2 = random(sceneW);
-        let y1 = random(sceneH);
-        let y2 = random(sceneH);
+    let bounds = [
+        [ 0, 1, 1, 1 ],
+        [ 2, 3, 1, 1 ],
+        [ 4, 5, 1, 1 ],
+        [ 1, 2, 2, 2 ],
+        [ 5, 6, 2, 2 ],
+        [ 1, 4, 3, 3 ],
+        [ 2, 5, 4, 4 ],
+        [ 1, 2, 5, 5 ],
+        [ 3, 4, 5, 5 ],
+        [ 5, 6, 5, 5 ],
+        [ 1, 1, 3, 5 ],
+        [ 2, 2, 1, 2 ],
+        [ 2, 2, 5, 6 ],
+        [ 3, 3, 1, 3 ],
+        [ 4, 4, 1, 2 ],
+        [ 4, 4, 4, 6 ],
+        [ 5, 5, 1, 3 ]
+    ];
+    const scaleW = sceneW / 6;
+    const scaleH = sceneH / 6;
+    for (let i = 0; i < bounds.length; i++) {
+        let x1 = bounds[i][0] * scaleW;
+        let x2 = bounds[i][1] * scaleW;
+        let y1 = bounds[i][2] * scaleH;
+        let y2 = bounds[i][3] * scaleH;
         walls[i] = new Boundary(x1, y1, x2, y2);
     }
     walls.push(new Boundary(0, 0, sceneW, 0));
