@@ -66,9 +66,9 @@ function addBoundaries() {
 
 function draw() {
     if (keyIsDown(LEFT_ARROW)) {
-        particle.rotate(-0.1);
+        particle.rotate(-0.02);
     } else if (keyIsDown(RIGHT_ARROW)) {
-        particle.rotate(0.1);
+        particle.rotate(0.02);
     } else if (keyIsDown(UP_ARROW)) {
         particle.move(2);
     } else if (keyIsDown(DOWN_ARROW)) {
