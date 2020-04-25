@@ -46,32 +46,32 @@ class Boid {
         return steering;
     }
 
-  separation(boids) {
-    let perceptionRadius = 50;
-    let steering = createVector();
-    let total = 0;
-    for (let other of boids) {
-        let d = dist(
-            this.position.x,
-            this.position.y,
-            other.position.x,
-            other.position.y
-        );
-        if (other != this && d < perceptionRadius) {
-            let diff = p5.Vector.sub(this.position, other.position);
-            diff.div(d * d);
-            steering.add(diff);
-            total++;
+    separation(boids) {
+        let perceptionRadius = 50;
+        let steering = createVector();
+        let total = 0;
+        for (let other of boids) {
+            let d = dist(
+                this.position.x,
+                this.position.y,
+                other.position.x,
+                other.position.y
+            );
+            if (other != this && d < perceptionRadius) {
+                let diff = p5.Vector.sub(this.position, other.position);
+                diff.div(d * d);
+                steering.add(diff);
+                total++;
+            }
         }
+        if (total > 0) {
+            steering.div(total);
+            steering.setMag(this.maxSpeed);
+            steering.sub(this.velocity);
+            steering.limit(this.maxForce);
+        }
+        return steering;
     }
-    if (total > 0) {
-        steering.div(total);
-        steering.setMag(this.maxSpeed);
-        steering.sub(this.velocity);
-        steering.limit(this.maxForce);
-    }
-    return steering;
-  }
 
     cohesion(boids) {
         let perceptionRadius = 100;
@@ -117,8 +117,24 @@ class Boid {
     }
 
     show() {
-        strokeWeight(8);
+        let x = this.position.x;
+        let y = this.position.y;
+
+        push();
+        translate(x, y);
+
+        let vector = createVector(this.velocity.x, this.velocity.y);
+        /*vector.setMag(20);
+        stroke(0, 255, 0);
+        line(0, 0, vector.x, vector.y);*/
+
+        noFill();
         stroke(255);
-        point(this.position.x, this.position.y);
+        let ang = atan(vector.y / vector.x);
+        if (vector.x < 0)
+            ang += PI;
+        rotate(ang);
+        triangle(-2, 2, 4, 0, -2, -2);
+        pop();
     }
 }
