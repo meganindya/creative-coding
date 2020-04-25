@@ -4,8 +4,8 @@ class Boid {
     this.velocity = p5.Vector.random2D();
     this.velocity.setMag(random(2, 4));
     this.acceleration = createVector();
-    this.maxForce = 1;
-    this.maxSpeed = 4;
+    this.maxForce = 0.2;
+    this.maxSpeed = 2;
   }
 
   edges() {
@@ -22,7 +22,7 @@ class Boid {
   }
 
   align(boids) {
-    let perceptionRadius = 50;
+    let perceptionRadius = 100;
     let steering = createVector();
     let total = 0;
     for (let other of boids) {
@@ -103,10 +103,6 @@ class Boid {
     let alignment = this.align(boids);
     let cohesion = this.cohesion(boids);
     let separation = this.separation(boids);
-
-    alignment.mult(alignSlider.value());
-    cohesion.mult(cohesionSlider.value());
-    separation.mult(separationSlider.value());
 
     this.acceleration.add(alignment);
     this.acceleration.add(cohesion);
