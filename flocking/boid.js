@@ -22,31 +22,6 @@ class Boid {
         }
     }
 
-    align(boids) {
-        let perceptionRadius = 100;
-        let steering = this.p.createVector();
-        let total = 0;
-        for (let other of boids) {
-            let d = this.p.dist(
-                this.position.x,
-                this.position.y,
-                other.position.x,
-                other.position.y
-            );
-            if (other != this && d < perceptionRadius) {
-                steering.add(other.velocity);
-                total++;
-            }
-        }
-        if (total > 0) {
-            steering.div(total);
-            steering.setMag(this.maxSpeed);
-            steering.sub(this.velocity);
-            steering.limit(this.maxForce);
-        }
-        return steering;
-    }
-
     separation(boids) {
         let perceptionRadius = 50;
         let steering = this.p.createVector();
@@ -60,8 +35,33 @@ class Boid {
             );
             if (other != this && d < perceptionRadius) {
                 let diff = p5.Vector.sub(this.position, other.position);
-                diff.div(d * d);
+                diff.div(d * d / 4);
                 steering.add(diff);
+                total++;
+            }
+        }
+        if (total > 0) {
+            steering.div(total);
+            steering.setMag(this.maxSpeed);
+            steering.sub(this.velocity);
+            steering.limit(this.maxForce);
+        }
+        return steering;
+    }
+
+    alignment(boids) {
+        let perceptionRadius = 100;
+        let steering = this.p.createVector();
+        let total = 0;
+        for (let other of boids) {
+            let d = this.p.dist(
+                this.position.x,
+                this.position.y,
+                other.position.x,
+                other.position.y
+            );
+            if (other != this && d < perceptionRadius) {
+                steering.add(other.velocity);
                 total++;
             }
         }
@@ -101,17 +101,17 @@ class Boid {
     }
 
     flock(boids) {
-        let alignment = this.align(boids);
-        let cohesion = this.cohesion(boids);
         let separation = this.separation(boids);
+        let alignment = this.alignment(boids);
+        let cohesion = this.cohesion(boids);
 
         separation.mult(separationSlider.value());
         alignment.mult(alignmentSlider.value());
         cohesion.mult(cohesionSlider.value());
 
+        this.acceleration.add(separation);
         this.acceleration.add(alignment);
         this.acceleration.add(cohesion);
-        this.acceleration.add(separation);
     }
 
     update() {
