@@ -1,4 +1,3 @@
-
 let canvasWidth, canvasHeight;
 let getCanvasSize = () => {
     canvasWidth = document.getElementById('canvas').offsetWidth;

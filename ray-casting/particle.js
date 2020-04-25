@@ -1,15 +1,8 @@
-// Daniel Shiffman
-// https://thecodingtrain.com/CodingChallenges/145-2d-ray-casting.html
-// https://youtu.be/TOEi6T2mtHo
-
-// 2D Ray Casting
-// https://editor.p5js.org/codingtrain/sketches/Nqsq3DFv-
-
 class Particle {
   constructor() {
     this.pos = createVector(width / 2, height / 2);
     this.rays = [];
-    for (let a = 0; a < 360; a += 1) {
+    for (let a = 0; a < 360; a += 0.33) {
       this.rays.push(new Ray(this.pos, radians(a)));
     }
   }
