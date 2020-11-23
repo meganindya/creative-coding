@@ -1,16 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './LudoBoard.scss';
 
 // -- Component ------------------------------------------------------------------------------------
 
 export default function LudoBoard(): JSX.Element {
+  const arrangementScheme: { [key: string]: string } = {
+    'top-left': 'red',
+    'top-right': 'green',
+    'bottom-left': 'blue',
+    'bottom-right': 'yellow'
+  };
+
+  const [blockSize, setBlockSize] = useState<number>(-1);
+
+  useEffect(() => {
+    const anyPathBlock = document.querySelector('.path-block') as HTMLElement | null;
+    if (anyPathBlock) setBlockSize(anyPathBlock.offsetWidth);
+  }, []);
+
+  console.log(blockSize);
+
   // -- JSX Elements -----------------------------------------------------------
 
-  const playerBase = (colorClassName: string) => (
-    <div className={`player-base ${colorClassName}`}>
+  const playerBase = (position: string) => (
+    <div className={`player-base ${arrangementScheme[position]}`} id={`position-${position}`}>
       <div className="player-base-box">
         {[1, 2, 3, 4].map((index) => (
-          <div className={`player-base-position ${colorClassName}`} key={`base-${index}`}></div>
+          <div
+            className={`player-base-position ${arrangementScheme[position]}`}
+            key={`base-${index}`}
+          ></div>
         ))}
       </div>
     </div>
@@ -45,12 +64,12 @@ export default function LudoBoard(): JSX.Element {
   const homeBlock = (
     <div id="home-block">
       {[
-        'red triangle-left',
-        'green triangle-top',
-        'yellow triangle-right',
-        'blue triangle-bottom'
-      ].map((classNames) => (
-        <div className={`home-triangle ${classNames}`} key={classNames.split(' ')[1]}></div>
+        { color: `${arrangementScheme['top-left']}`, id: 'triangle-left' },
+        { color: `${arrangementScheme['top-right']}`, id: 'triangle-top' },
+        { color: `${arrangementScheme['bottom-right']}`, id: 'triangle-right' },
+        { color: `${arrangementScheme['bottom-left']}`, id: 'triangle-bottom' }
+      ].map((params) => (
+        <div className={`home-triangle ${params.color}`} id={params.id} key={params.id}></div>
       ))}
     </div>
   );
@@ -60,19 +79,19 @@ export default function LudoBoard(): JSX.Element {
   return (
     <div id="ludo-board">
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {playerBase('red')}
-        {gamePath('green', 'path-column', 'flip')}
-        {playerBase('green')}
+        {playerBase('top-left')}
+        {gamePath(arrangementScheme['top-right'], 'path-column', 'flip')}
+        {playerBase('top-right')}
       </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {gamePath('red', 'path-row', 'flip')}
+        {gamePath(arrangementScheme['top-left'], 'path-row', 'flip')}
         {homeBlock}
-        {gamePath('yellow', 'path-row', 'normal')}
+        {gamePath(arrangementScheme['bottom-right'], 'path-row', 'normal')}
       </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {playerBase('blue')}
-        {gamePath('blue', 'path-column', 'normal')}
-        {playerBase('yellow')}
+        {playerBase('bottom-left')}
+        {gamePath(arrangementScheme['bottom-left'], 'path-column', 'normal')}
+        {playerBase('bottom-right')}
       </div>
     </div>
   );

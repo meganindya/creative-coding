@@ -47,19 +47,19 @@
     height: #{$blockSize * 6};
     border: 1px solid $blockBorder;
 
-    &.red {
+    &#position-top-left {
       border-radius: $boardRadius 0 0 0;
     }
 
-    &.green {
+    &#position-top-right {
       border-radius: 0 $boardRadius 0 0;
     }
 
-    &.yellow {
+    &#position-bottom-right {
       border-radius: 0 0 $boardRadius 0;
     }
 
-    &.blue {
+    &#position-bottom-left {
       border-radius: 0 0 0 $boardRadius;
     }
 
@@ -169,24 +169,24 @@
         calc(100% - 2.414px) calc(100% - 1px)
       );
 
-      &.triangle-left {
+      &#triangle-left {
         transform: rotate(90deg);
         left: 0;
         top: 0;
       }
 
-      &.triangle-top {
+      &#triangle-top {
         transform: rotate(180deg);
         top: 0;
       }
 
-      &.triangle-right {
+      &#triangle-right {
         transform: rotate(-90deg);
         right: 0;
         top: 0;
       }
 
-      &.triangle-bottom {
+      &#triangle-bottom {
         transform: rotate(0deg);
         bottom: 0;
       }
