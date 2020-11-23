@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PlayerChips from './PlayerChips';
 import './LudoBoard.scss';
 
 // -- Component ------------------------------------------------------------------------------------
@@ -12,13 +13,10 @@ export default function LudoBoard(): JSX.Element {
   };
 
   const [blockSize, setBlockSize] = useState<number>(-1);
-
   useEffect(() => {
     const anyPathBlock = document.querySelector('.path-block') as HTMLElement | null;
     if (anyPathBlock) setBlockSize(anyPathBlock.offsetWidth);
   }, []);
-
-  console.log(blockSize);
 
   // -- JSX Elements -----------------------------------------------------------
 
@@ -93,6 +91,9 @@ export default function LudoBoard(): JSX.Element {
         {gamePath(arrangementScheme['bottom-left'], 'path-column', 'normal')}
         {playerBase('bottom-right')}
       </div>
+      {blockSize !== -1 && (
+        <PlayerChips arrangementScheme={arrangementScheme} blockSize={blockSize} />
+      )}
     </div>
   );
 }
