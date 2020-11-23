@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './PlayerChips.scss';
 
 // -- Component ------------------------------------------------------------------------------------
@@ -9,13 +9,14 @@ export default function PlayerChips(props: {
 }): JSX.Element {
   // -- Position utilities -----------------------------------------------------
 
+  const startCellIndices: { [key: string]: { row: number; col: number } } = {
+    'top-left': { row: 6, col: 1 },
+    'top-right': { row: 1, col: 8 },
+    'bottom-left': { row: 13, col: 6 },
+    'bottom-right': { row: 8, col: 13 }
+  };
+
   const getAbsoluteStartCellPosition = (position: string): [number, number] => {
-    const startCellIndices: { [key: string]: { row: number; col: number } } = {
-      'top-left': { row: 6, col: 1 },
-      'top-right': { row: 1, col: 8 },
-      'bottom-left': { row: 13, col: 6 },
-      'bottom-right': { row: 8, col: 13 }
-    };
     const { row, col } = startCellIndices[position];
     return [props.blockSize * (col + 0.5), props.blockSize * (row + 0.5)];
   };
@@ -51,6 +52,15 @@ export default function PlayerChips(props: {
 
   // -- States -----------------------------------------------------------------
 
+  const gameMapArray: { type: string; chipIndex: string }[][][] = [];
+  for (let i = 0; i < 15; i++) {
+    gameMapArray[i] = new Array(15);
+    for (let j = 0; j < 15; j++) {
+      gameMapArray[i][j] = [];
+    }
+  }
+  const [gameMap, setGameMap] = useState(gameMapArray);
+
   const playerTLStart = getAbsoluteStartCellPosition('top-left');
   const playerTRStart = getAbsoluteStartCellPosition('top-right');
   const playerBLStart = getAbsoluteStartCellPosition('bottom-left');
@@ -73,15 +83,55 @@ export default function PlayerChips(props: {
     playerBRPosInit[index] = getAbsoluteBaseCellPosition('bottom-right', parseInt(index) - 1);
   });
 
-  playerTLPosInit = { ...playerTLPosInit, '4': playerTLStart };
-  playerTRPosInit = { ...playerTRPosInit, '4': playerTRStart };
-  playerBLPosInit = { ...playerBLPosInit, '4': playerBLStart };
-  playerBRPosInit = { ...playerBRPosInit, '4': playerBRStart };
+  //   playerTLPosInit = { ...playerTLPosInit, '4': playerTLStart };
+  //   playerTRPosInit = { ...playerTRPosInit, '4': playerTRStart };
+  //   playerBLPosInit = { ...playerBLPosInit, '4': playerBLStart };
+  //   playerBRPosInit = { ...playerBRPosInit, '4': playerBRStart };
 
   const [playerTLPos, setPlayerTLPos] = useState(playerTLPosInit);
   const [playerTRPos, setPlayerTRPos] = useState(playerTRPosInit);
   const [playerBLPos, setPlayerBLPos] = useState(playerBLPosInit);
   const [playerBRPos, setPlayerBRPos] = useState(playerBRPosInit);
+
+  // -- Position actions -------------------------------------------------------
+
+  const stateMap: { [key: string]: { [key: string]: [number, number] } } = {
+    'top-left': playerTLPos,
+    'top-right': playerTRPos,
+    'bottom-left': playerBLPos,
+    'bottom-right': playerBRPos
+  };
+
+  const updateStateMap: {
+    [key: string]: React.Dispatch<
+      React.SetStateAction<{
+        [key: string]: [number, number];
+      }>
+    >;
+  } = {
+    'top-left': setPlayerTLPos,
+    'top-right': setPlayerTRPos,
+    'bottom-left': setPlayerBLPos,
+    'bottom-right': setPlayerBRPos
+  };
+
+  const startChip = (type: string, chipIndex: string) => {
+    let newGameMap = gameMap;
+    const { row, col } = startCellIndices[type];
+    newGameMap[row][col].push({ type, chipIndex });
+    setGameMap(newGameMap);
+
+    updateStateMap[type]({ ...stateMap[type], [chipIndex]: getAbsoluteStartCellPosition(type) });
+  };
+
+  // -- On mounnt --------------------------------------------------------------
+
+  useEffect(() => {
+    startChip('top-left', '4');
+    startChip('top-right', '4');
+    startChip('bottom-left', '4');
+    startChip('bottom-right', '4');
+  }, []);
 
   // -- Render -----------------------------------------------------------------
   return (
