@@ -1,10 +1,13 @@
 import React from 'react';
+
+import LudoBoard from './components/LudoBoard';
+
 import './App.scss';
 
-function App() {
+function App(): JSX.Element {
   return (
     <div className="App">
-      <header className="App-header">Hello World</header>
+      <LudoBoard />
     </div>
   );
 }

@@ -1,0 +1,195 @@
+@import '../css-utils/sizes';
+@import '../css-utils/colors';
+
+#ludo-board {
+  position: relative;
+  z-index: 2;
+  width: #{$blockSize * 15};
+  height: #{$blockSize * 15};
+  display: flex;
+  flex-direction: column;
+  border-radius: calc(#{$boardRadius} + 1px);
+  box-shadow: 0 0 0 1px $blockBorder;
+
+  &::after {
+    position: absolute;
+    z-index: 1;
+    width: inherit;
+    height: inherit;
+    display: table;
+    border-radius: inherit;
+    box-shadow: 0 0 1rem 0 $shadow;
+    content: ' ';
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .red {
+    background: $red;
+  }
+
+  .green {
+    background: $green;
+  }
+
+  .yellow {
+    background: $yellow;
+  }
+
+  .blue {
+    background: $blue;
+  }
+
+  .player-base {
+    width: #{$blockSize * 6};
+    height: #{$blockSize * 6};
+    border: 1px solid $blockBorder;
+
+    &.red {
+      border-radius: $boardRadius 0 0 0;
+    }
+
+    &.green {
+      border-radius: 0 $boardRadius 0 0;
+    }
+
+    &.yellow {
+      border-radius: 0 0 $boardRadius 0;
+    }
+
+    &.blue {
+      border-radius: 0 0 0 $boardRadius;
+    }
+
+    .player-base-box {
+      width: #{$blockSize * 4};
+      height: #{$blockSize * 4};
+      margin: $blockSize;
+      border-radius: $baseInnerRadius;
+      background: $white;
+
+      .player-base-position {
+        float: left;
+        width: $blockSize;
+        height: $blockSize;
+        margin: #{$blockSize / 2};
+        border-radius: $baseInnerRadius;
+      }
+    }
+  }
+
+  .game-path-block {
+    display: flex;
+
+    .game-path-col {
+      display: flex;
+
+      .path-block {
+        width: $blockSize;
+        height: $blockSize;
+        border: 1px solid $blockBorder;
+
+        &.white-block {
+          background: $white;
+        }
+      }
+    }
+
+    &.path-row {
+      width: #{$blockSize * 6};
+      height: #{$blockSize * 3};
+
+      &.flip {
+        flex-direction: column;
+      }
+
+      &.normal {
+        flex-direction: column-reverse;
+      }
+
+      .game-path-col {
+        width: inherit;
+        height: $blockSize;
+        flex-direction: row;
+
+        &.flip {
+          flex-direction: row-reverse;
+        }
+
+        &.normal {
+          flex-direction: row;
+        }
+      }
+    }
+
+    &.path-column {
+      width: #{$blockSize * 3};
+      height: #{$blockSize * 6};
+
+      &.flip {
+        flex-direction: row-reverse;
+      }
+
+      &.normal {
+        flex-direction: row;
+      }
+
+      .game-path-col {
+        width: $blockSize;
+        height: inherit;
+        flex-direction: column;
+
+        &.flip {
+          flex-direction: column-reverse;
+        }
+
+        &.normal {
+          flex-direction: column;
+        }
+      }
+    }
+  }
+
+  #home-block {
+    position: relative;
+    width: #{$blockSize * 3};
+    height: #{$blockSize * 3};
+    background: $blockBorder;
+
+    .home-triangle {
+      position: absolute;
+      width: inherit;
+      height: inherit;
+      border: 1px solid $blockBorder;
+      clip-path: polygon(
+        2.414px calc(100% - 1px),
+        50% calc(50% + 1.414px),
+        calc(100% - 2.414px) calc(100% - 1px)
+      );
+
+      &.triangle-left {
+        transform: rotate(90deg);
+        left: 0;
+        top: 0;
+      }
+
+      &.triangle-top {
+        transform: rotate(180deg);
+        top: 0;
+      }
+
+      &.triangle-right {
+        transform: rotate(-90deg);
+        right: 0;
+        top: 0;
+      }
+
+      &.triangle-bottom {
+        transform: rotate(0deg);
+        bottom: 0;
+      }
+    }
+  }
+}
