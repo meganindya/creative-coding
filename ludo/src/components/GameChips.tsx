@@ -1,6 +1,5 @@
-import { stringify } from 'querystring';
 import React, { useEffect, useState } from 'react';
-import './PlayerChips.scss';
+import Chip from './Chip';
 
 // -- Component ------------------------------------------------------------------------------------
 
@@ -133,36 +132,40 @@ export default function PlayerChips(props: {
   return (
     <React.Fragment>
       {Object.keys(playerTLPos).map((chipIndex, index) => (
-        <div
-          className={`player-chip ${props.arrangementScheme['top-left']}-chip`}
-          style={getAbsChipPos(playerTLPos[chipIndex])}
+        <Chip
+          type="top-left"
+          color={props.arrangementScheme['top-left']}
+          index={index}
+          position={getAbsChipPos(playerTLPos[chipIndex])}
           key={`player-${props.arrangementScheme['top-left']}-${index}`}
-          id={`player-${props.arrangementScheme['top-left']}-${index}`}
-        ></div>
+        />
       ))}
       {Object.keys(playerTRPos).map((chipIndex, index) => (
-        <div
-          className={`player-chip ${props.arrangementScheme['top-right']}-chip`}
-          style={getAbsChipPos(playerTRPos[chipIndex])}
+        <Chip
+          type="top-right"
+          color={props.arrangementScheme['top-right']}
+          index={index}
+          position={getAbsChipPos(playerTRPos[chipIndex])}
           key={`player-${props.arrangementScheme['top-right']}-${index}`}
-          id={`player-${props.arrangementScheme['top-right']}-${index}`}
-        ></div>
+        />
       ))}
       {Object.keys(playerBLPos).map((chipIndex, index) => (
-        <div
-          className={`player-chip ${props.arrangementScheme['bottom-left']}-chip`}
-          style={getAbsChipPos(playerBLPos[chipIndex])}
+        <Chip
+          type="bottom-left"
+          color={props.arrangementScheme['bottom-left']}
+          index={index}
+          position={getAbsChipPos(playerBLPos[chipIndex])}
           key={`player-${props.arrangementScheme['bottom-left']}-${index}`}
-          id={`player-${props.arrangementScheme['bottom-left']}-${index}`}
-        ></div>
+        />
       ))}
       {Object.keys(playerBRPos).map((chipIndex, index) => (
-        <div
-          className={`player-chip ${props.arrangementScheme['bottom-right']}-chip`}
-          style={getAbsChipPos(playerBRPos[chipIndex])}
+        <Chip
+          type="bottom-right"
+          color={props.arrangementScheme['bottom-right']}
+          index={index}
+          position={getAbsChipPos(playerBRPos[chipIndex])}
           key={`player-${props.arrangementScheme['bottom-right']}-${index}`}
-          id={`player-${props.arrangementScheme['bottom-right']}-${index}`}
-        ></div>
+        />
       ))}
     </React.Fragment>
   );

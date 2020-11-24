@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import PlayerChips from './PlayerChips';
+import GameChips from './GameChips';
 import './LudoBoard.scss';
 
 // -- Component ------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ export default function LudoBoard(): JSX.Element {
         {playerBase('bottom-right')}
       </div>
       {blockSize !== -1 && (
-        <PlayerChips arrangementScheme={arrangementScheme} blockSize={blockSize} />
+        <GameChips arrangementScheme={arrangementScheme} blockSize={blockSize} />
       )}
     </div>
   );
