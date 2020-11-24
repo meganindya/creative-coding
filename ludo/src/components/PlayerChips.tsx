@@ -1,3 +1,4 @@
+import { stringify } from 'querystring';
 import React, { useEffect, useState } from 'react';
 import './PlayerChips.scss';
 
@@ -16,39 +17,61 @@ export default function PlayerChips(props: {
     'bottom-right': { row: 8, col: 13 }
   };
 
-  const getAbsoluteStartCellPosition = (position: string): [number, number] => {
-    const { row, col } = startCellIndices[position];
-    return [props.blockSize * (col + 0.5), props.blockSize * (row + 0.5)];
-  };
+  const baseCellIndices: { [key: string]: { [key: string]: { row: number; col: number } } } = {};
+  (() => {
+    ['top-left', 'top-right', 'bottom-left', 'bottom-right'].forEach((position) => {
+      [0, 1, 2, 3].forEach((index) => {
+        const baseIndices: { [key: string]: { rowInit: number; colInit: number } } = {
+          'top-left': { rowInit: 0, colInit: 5 },
+          'top-right': { rowInit: 5, colInit: 14 },
+          'bottom-left': { rowInit: 9, colInit: 0 },
+          'bottom-right': { rowInit: 14, colInit: 9 }
+        };
+        const { rowInit, colInit } = baseIndices[position];
 
-  const getAbsoluteBaseCellPosition = (position: string, index: number): [number, number] => {
-    const baseIndices: { [key: string]: { rowInit: number; colInit: number } } = {
-      'top-left': { rowInit: 0, colInit: 6 },
-      'top-right': { rowInit: 6, colInit: 15 },
-      'bottom-left': { rowInit: 9, colInit: 0 },
-      'bottom-right': { rowInit: 15, colInit: 9 }
+        const offsetMultiplier: { [key: string]: { rowOffMul: number; colOffMul: number } } = {
+          'top-left': { rowOffMul: 1, colOffMul: -1 },
+          'top-right': { rowOffMul: -1, colOffMul: -1 },
+          'bottom-right': { rowOffMul: -1, colOffMul: 1 },
+          'bottom-left': { rowOffMul: 1, colOffMul: 1 }
+        };
+        const { rowOffMul, colOffMul } = offsetMultiplier[position];
+
+        let [rowOffset, colOffset] = [Math.floor(index / 2), index % 2];
+        if (position === 'top-left' || position === 'bottom-right') {
+          [rowOffset, colOffset] = [colOffset, rowOffset];
+        }
+
+        if (!baseCellIndices[position]) baseCellIndices[position] = {};
+        baseCellIndices[position][(index + 1).toString()] = {
+          row: rowInit + rowOffMul * (1.5 + rowOffset * 2),
+          col: colInit + colOffMul * (1.5 + colOffset * 2)
+        };
+      });
+    });
+  })();
+
+  const getAbsChipPos = (indices: { row: number; col: number }): { top: number; left: number } => {
+    const absPos: { top: number; left: number } = {
+      top: props.blockSize * (indices.row + 0.5),
+      left: props.blockSize * (indices.col + 0.5)
     };
-    const { rowInit, colInit } = baseIndices[position];
 
-    const offsetMultiplier: { [key: string]: { rowOffMul: number; colOffMul: number } } = {
-      'top-left': { rowOffMul: 1, colOffMul: -1 },
-      'top-right': { rowOffMul: -1, colOffMul: -1 },
-      'bottom-right': { rowOffMul: -1, colOffMul: 1 },
-      'bottom-left': { rowOffMul: 1, colOffMul: 1 }
-    };
-    const { rowOffMul, colOffMul } = offsetMultiplier[position];
-
-    let [rowOffset, colOffset] = [Math.floor(index / 2), index % 2];
-    if (position === 'top-left' || position === 'bottom-right') {
-      [rowOffset, colOffset] = [colOffset, rowOffset];
+    if (indices.row % 1 !== 0 || indices.col % 1 !== 0) {
+      absPos['top']++;
+      absPos['left']++;
     }
 
-    const offset = props.blockSize * 2;
-    return [
-      colInit * props.blockSize + colOffMul * offset * (1 + colOffset) + 1,
-      rowInit * props.blockSize + rowOffMul * offset * (1 + rowOffset) + 1
-    ];
+    return absPos;
   };
+
+  // -- Absolute position constants --------------------------------------------
+
+  const playerTLStart = getAbsChipPos(startCellIndices['top-left']);
+  const playerTRStart = getAbsChipPos(startCellIndices['top-right']);
+  const playerBLStart = getAbsChipPos(startCellIndices['bottom-left']);
+  const playerBRStart = getAbsChipPos(startCellIndices['bottom-right']);
+  console.log(playerTLStart, playerTRStart, playerBLStart, playerBRStart);
 
   // -- States -----------------------------------------------------------------
 
@@ -61,41 +84,14 @@ export default function PlayerChips(props: {
   }
   const [gameMap, setGameMap] = useState(gameMapArray);
 
-  const playerTLStart = getAbsoluteStartCellPosition('top-left');
-  const playerTRStart = getAbsoluteStartCellPosition('top-right');
-  const playerBLStart = getAbsoluteStartCellPosition('bottom-left');
-  const playerBRStart = getAbsoluteStartCellPosition('bottom-right');
-
-  let playerTLPosInit: { [key: string]: [number, number] } = {};
-  ['4', '3', '2', '1'].forEach((index) => {
-    playerTLPosInit[index] = getAbsoluteBaseCellPosition('top-left', parseInt(index) - 1);
-  });
-  let playerTRPosInit: { [key: string]: [number, number] } = {};
-  ['4', '3', '2', '1'].forEach((index) => {
-    playerTRPosInit[index] = getAbsoluteBaseCellPosition('top-right', parseInt(index) - 1);
-  });
-  let playerBLPosInit: { [key: string]: [number, number] } = {};
-  ['4', '3', '2', '1'].forEach((index) => {
-    playerBLPosInit[index] = getAbsoluteBaseCellPosition('bottom-left', parseInt(index) - 1);
-  });
-  let playerBRPosInit: { [key: string]: [number, number] } = {};
-  ['4', '3', '2', '1'].forEach((index) => {
-    playerBRPosInit[index] = getAbsoluteBaseCellPosition('bottom-right', parseInt(index) - 1);
-  });
-
-  //   playerTLPosInit = { ...playerTLPosInit, '4': playerTLStart };
-  //   playerTRPosInit = { ...playerTRPosInit, '4': playerTRStart };
-  //   playerBLPosInit = { ...playerBLPosInit, '4': playerBLStart };
-  //   playerBRPosInit = { ...playerBRPosInit, '4': playerBRStart };
-
-  const [playerTLPos, setPlayerTLPos] = useState(playerTLPosInit);
-  const [playerTRPos, setPlayerTRPos] = useState(playerTRPosInit);
-  const [playerBLPos, setPlayerBLPos] = useState(playerBLPosInit);
-  const [playerBRPos, setPlayerBRPos] = useState(playerBRPosInit);
+  const [playerTLPos, setPlayerTLPos] = useState(baseCellIndices['top-left']);
+  const [playerTRPos, setPlayerTRPos] = useState(baseCellIndices['top-right']);
+  const [playerBLPos, setPlayerBLPos] = useState(baseCellIndices['bottom-left']);
+  const [playerBRPos, setPlayerBRPos] = useState(baseCellIndices['bottom-right']);
 
   // -- Position actions -------------------------------------------------------
 
-  const stateMap: { [key: string]: { [key: string]: [number, number] } } = {
+  const stateMap: { [key: string]: { [key: string]: { row: number; col: number } } } = {
     'top-left': playerTLPos,
     'top-right': playerTRPos,
     'bottom-left': playerBLPos,
@@ -105,7 +101,7 @@ export default function PlayerChips(props: {
   const updateStateMap: {
     [key: string]: React.Dispatch<
       React.SetStateAction<{
-        [key: string]: [number, number];
+        [key: string]: { row: number; col: number };
       }>
     >;
   } = {
@@ -121,10 +117,10 @@ export default function PlayerChips(props: {
     newGameMap[row][col].push({ type, chipIndex });
     setGameMap(newGameMap);
 
-    updateStateMap[type]({ ...stateMap[type], [chipIndex]: getAbsoluteStartCellPosition(type) });
+    updateStateMap[type]({ ...stateMap[type], [chipIndex]: startCellIndices[type] });
   };
 
-  // -- On mounnt --------------------------------------------------------------
+  // -- On mount --------------------------------------------------------------
 
   useEffect(() => {
     startChip('top-left', '4');
@@ -136,34 +132,34 @@ export default function PlayerChips(props: {
   // -- Render -----------------------------------------------------------------
   return (
     <React.Fragment>
-      {Object.keys(playerTLPos).map((chipPos, index) => (
+      {Object.keys(playerTLPos).map((chipIndex, index) => (
         <div
           className={`player-chip ${props.arrangementScheme['top-left']}-chip`}
-          style={{ left: playerTLPos[chipPos][0], top: playerTLPos[chipPos][1] }}
+          style={getAbsChipPos(playerTLPos[chipIndex])}
           key={`player-${props.arrangementScheme['top-left']}-${index}`}
           id={`player-${props.arrangementScheme['top-left']}-${index}`}
         ></div>
       ))}
-      {Object.keys(playerTRPos).map((chipPos, index) => (
+      {Object.keys(playerTRPos).map((chipIndex, index) => (
         <div
           className={`player-chip ${props.arrangementScheme['top-right']}-chip`}
-          style={{ left: playerTRPos[chipPos][0], top: playerTRPos[chipPos][1] }}
+          style={getAbsChipPos(playerTRPos[chipIndex])}
           key={`player-${props.arrangementScheme['top-right']}-${index}`}
           id={`player-${props.arrangementScheme['top-right']}-${index}`}
         ></div>
       ))}
-      {Object.keys(playerBLPos).map((chipPos, index) => (
+      {Object.keys(playerBLPos).map((chipIndex, index) => (
         <div
           className={`player-chip ${props.arrangementScheme['bottom-left']}-chip`}
-          style={{ left: playerBLPos[chipPos][0], top: playerBLPos[chipPos][1] }}
+          style={getAbsChipPos(playerBLPos[chipIndex])}
           key={`player-${props.arrangementScheme['bottom-left']}-${index}`}
           id={`player-${props.arrangementScheme['bottom-left']}-${index}`}
         ></div>
       ))}
-      {Object.keys(playerBRPos).map((chipPos, index) => (
+      {Object.keys(playerBRPos).map((chipIndex, index) => (
         <div
           className={`player-chip ${props.arrangementScheme['bottom-right']}-chip`}
-          style={{ left: playerBRPos[chipPos][0], top: playerBRPos[chipPos][1] }}
+          style={getAbsChipPos(playerBRPos[chipIndex])}
           key={`player-${props.arrangementScheme['bottom-right']}-${index}`}
           id={`player-${props.arrangementScheme['bottom-right']}-${index}`}
         ></div>
