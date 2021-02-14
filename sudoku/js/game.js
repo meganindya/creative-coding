@@ -11,17 +11,7 @@ var initVals, finalVals; // matrix of initial unfilled, filled board
 class Cell {
     constructor() {
         this.value = 0;
-        this.guess = [
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-        ];
+        this.guess = [false, false, false, false, false, false, false, false, false];
 
         this.writable = true;
         this.isGuessed = false;
@@ -53,13 +43,6 @@ var wrongValFound;
 // ====================================================
 
 // triggered after document is loaded
-
-$(document).ready(function () {
-    setupRender();
-    reset();
-
-    refreshBoard();
-});
 
 // resets all parameters
 
@@ -331,8 +314,7 @@ $(document).click(function (event) {
         var btnNum;
 
         if (curr.hasClass('btn-num')) btnNum = curr.attr('id').split('-')[1];
-        else if (curr.parent().hasClass('btn-num'))
-            btnNum = curr.parent().attr('id').split('-')[1];
+        else if (curr.parent().hasClass('btn-num')) btnNum = curr.parent().attr('id').split('-')[1];
 
         var cell = grid[selectedCell[0]][selectedCell[1]];
 
@@ -400,8 +382,7 @@ $(document).click(function (event) {
         var coordinates;
 
         if (curr.hasClass('cell')) coordinates = curr.attr('id').split('-');
-        else if (curr.parent().hasClass('cell'))
-            coordinates = curr.parent().attr('id').split('-');
+        else if (curr.parent().hasClass('cell')) coordinates = curr.parent().attr('id').split('-');
         else if (curr.parent().parent().hasClass('cell'))
             coordinates = curr.parent().parent().attr('id').split('-');
 
@@ -415,127 +396,10 @@ $(document).click(function (event) {
 // ## RENDERING FUNCTIONS ##
 // ====================================================
 
-// creates initial DOM layout
-
-function setupRender() {
-    var wrapper = document.createElement('div');
-    wrapper.id = 'wrapper';
-    wrapper.className = 'clearfix';
-    document.body.appendChild(wrapper);
-
-    var header = document.createElement('div');
-    header.id = 'head-bar';
-    wrapper.appendChild(header);
-
-    var reset = document.createElement('div');
-    reset.id = 'btn-reset';
-    header.appendChild(reset);
-
-    var status = document.createElement('span');
-    status.id = 'status';
-    status.innerHTML = 'Running';
-    header.appendChild(status);
-
-    var hint = document.createElement('div');
-    hint.id = 'btn-hint';
-    header.appendChild(hint);
-
-    var numgrid = document.createElement('div');
-    numgrid.id = 'num-grid';
-    wrapper.appendChild(numgrid);
-
-    var board = document.createElement('div');
-    board.id = 'board';
-    numgrid.appendChild(board);
-
-    var overlay = document.createElement('div');
-    overlay.id = 'overlay';
-    numgrid.appendChild(overlay);
-
-    for (var i = 0; i < 9; i++) {
-        for (var j = 0; j < 9; j++) {
-            createCell(i, j);
-        }
-    }
-
-    var numbar = document.createElement('div');
-    numbar.id = 'num-bar';
-    wrapper.appendChild(numbar);
-
-    var mode = document.createElement('div');
-    mode.className = 'num-bar-btn';
-    mode.id = 'btn-mode';
-    numbar.appendChild(mode);
-
-    var buttons = document.createElement('div');
-    buttons.id = 'num-buttons';
-    numbar.appendChild(buttons);
-
-    for (var i = 0; i < 9; i++) {
-        var btnNum = document.createElement('div');
-        btnNum.id = 'btn-' + (i + 1);
-        btnNum.className = 'btn-num num-bar-btn';
-        buttons.appendChild(btnNum);
-
-        var btnVal = document.createElement('span');
-        btnVal.className = 'btn-value';
-        btnVal.innerHTML = i + 1 + '';
-        btnNum.appendChild(btnVal);
-    }
-
-    var erase = document.createElement('div');
-    erase.className = 'num-bar-btn';
-    erase.id = 'btn-erase';
-    numbar.appendChild(erase);
-
-    // square borders
-
-    for (var i = 0; i < 9; i++) {
-        for (var j = 0; j < 9; j++) {
-            var temp = $('#cell-' + i + '-' + j);
-
-            if (i == 2 || i == 5) {
-                temp.css('border-bottom', '4px solid gray');
-            } else if (i == 3 || i == 6) {
-                temp.css('border-top', '4px solid gray');
-            }
-
-            if (j == 2 || j == 5) {
-                temp.css('border-right', '4px solid gray');
-            } else if (j == 3 || j == 6) {
-                temp.css('border-left', '4px solid gray');
-            }
-        }
-    }
-}
-
-function createCell(row, col) {
-    var cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.id = 'cell-' + row + '-' + col;
-    document.getElementById('board').appendChild(cell);
-
-    var value = document.createElement('span');
-    value.className = 'cell-value';
-    value.id = 'value-' + row + '-' + col;
-    cell.appendChild(value);
-
-    var guesses = document.createElement('div');
-    guesses.className = 'guess-grid';
-    cell.appendChild(guesses);
-
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            var guess = document.createElement('span');
-            guess.className = 'guess-value';
-            guess.id = 'guess-' + row + '-' + col + '-' + i + '-' + j;
-            guess.innerHTML = 1 + i * 3 + j + '';
-            guesses.appendChild(guess);
-        }
-    }
-}
-
 // draws dynamic elements according to parameters
+
+reset();
+refreshBoard();
 
 function refreshBoard() {
     // draws cells
@@ -554,19 +418,16 @@ function refreshBoard() {
             else {
                 $('#cell-' + i + '-' + j).css('cursor', 'pointer');
 
-                if (grid[i][j].isValWrong)
-                    $('#value-' + i + '-' + j).css('color', 'firebrick');
+                if (grid[i][j].isValWrong) $('#value-' + i + '-' + j).css('color', 'firebrick');
                 else $('#value-' + i + '-' + j).css('color', 'darkgreen');
 
-                if (grid[i][j].hintPlaced)
-                    $('#value-' + i + '-' + j).css('color', 'darkcyan');
+                if (grid[i][j].hintPlaced) $('#value-' + i + '-' + j).css('color', 'darkcyan');
             }
 
             // show value
             if (!grid[i][j].isGuessed) {
                 //write value
-                if (grid[i][j].value != 0)
-                    $('#value-' + i + '-' + j).html(grid[i][j].value);
+                if (grid[i][j].value != 0) $('#value-' + i + '-' + j).html(grid[i][j].value);
                 else $('#value-' + i + '-' + j).html('');
 
                 // remove guesses
@@ -624,9 +485,11 @@ function refreshBoard() {
 
     // status bar text
 
-    if (gameover) $('#status').html('GAME OVER');
-    else if (complete) $('#status').html('COMPLETE');
-    else $('#status').html('RUNNING');
+    document.getElementById('status').innerHTML = gameover
+        ? 'GAME OVER'
+        : complete
+        ? 'COMPLETE'
+        : 'RUNNING';
 
     // draw game end cover over number grid
 

@@ -1,0 +1,224 @@
+body {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  font-family: 'Roboto', sans-serif;
+}
+
+.clearfix:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+/* WRAPPER */
+/* ================ */
+
+#sudoku {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* HEAD BAR */
+/* ================ */
+
+#head-bar {
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+  border: 4px solid dimgray;
+  border-bottom: none;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  background: slateblue;
+}
+
+#btn-reset {
+  width: 36px;
+  height: 36px;
+  margin-left: 78px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 2px solid gray;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: khaki url('../images/btn-reset.png') no-repeat center;
+  background-size: 24px 24px;
+  cursor: pointer;
+}
+
+#status {
+  font-size: 1.5rem;
+  font-weight: 700;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: whitesmoke;
+}
+
+#btn-hint {
+  width: 36px;
+  height: 36px;
+  margin-right: 78px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 2px solid gray;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: maroon url('../images/btn-hint.png') no-repeat center;
+  background-size: 24px 24px;
+  cursor: pointer;
+}
+
+/* NUMBER GRID */
+/* ================ */
+
+#num-grid {
+  position: relative;
+}
+
+#overlay {
+  width: 572px;
+  height: 572px;
+  border: 2px solid #000;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  background: rgba(135, 207, 235, 0.75);
+  visibility: hidden;
+}
+
+#board {
+  width: 576px;
+  height: 576px;
+  border: 2px solid dimgray;
+  position: relative;
+  background: #f00;
+}
+
+/* CELL */
+/* =============== */
+
+.cell {
+  width: 64px;
+  height: 64px;
+  box-sizing: border-box;
+  padding: 10px;
+  margin: 0;
+  border: 2px solid dimgray;
+  position: relative;
+  display: block;
+  float: left;
+  background: aliceblue;
+}
+
+.cell-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+.guess-grid {
+  width: 42px;
+  height: 42px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.guess-value {
+  width: 14px;
+  height: 14px;
+  float: left;
+  text-align: center;
+  font-size: 0.85em;
+  visibility: hidden;
+}
+
+/* NUMBER BAR */
+/* ================ */
+
+#num-bar {
+  width: 100%;
+  height: 72px;
+  box-sizing: border-box;
+  border: 4px solid dimgray;
+  border-top: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: salmon;
+}
+
+#btn-mode {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  margin-right: 6px;
+  box-sizing: border-box;
+  border: 2px solid gray;
+  cursor: pointer;
+}
+
+#num-buttons {
+  display: flex;
+  flex-direction: row;
+}
+
+.btn-num {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 2px solid royalblue;
+  margin: 4px;
+  background: khaki;
+  cursor: pointer;
+  transition: all 300ms;
+}
+
+.btn-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: midnightblue;
+}
+
+#btn-erase {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  margin-left: 6px;
+  box-sizing: border-box;
+  border: 2px solid gray;
+  background: lightgreen url('../images/btn-erase.png') no-repeat center;
+  background-size: 30px 30px;
+  cursor: pointer;
+  transition: all 300ms;
+}
+
+.num-bar-btn {
+  transition: box-shadow 300ms;
+}
+
+.num-bar-btn:hover,
+.num-bar-btn:active {
+  box-shadow: 0 0 2px #000;
+}
