@@ -688,14 +688,14 @@ function refreshBoard() {
     // value mode
     if (isValueMode)
         $("#btn-mode").css({
-            "background":"oldlace url(\"images/write.png\") no-repeat center",
+            "background":"oldlace url(\"images/btn-write.png\") no-repeat center",
             "background-size":"26px 26px"
         });
 
     // guess mode
     else
         $("#btn-mode").css({
-            "background":"oldlace url(\"images/hint.png\") no-repeat center",
+            "background":"oldlace url(\"images/btn-guess.png\") no-repeat center",
             "background-size":"26px 26px"
         });
 
