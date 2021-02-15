@@ -1,0 +1,4 @@
+[submodule "board-games"]
+	path = board-games
+	url = git@github.com:meganindya/board-games.git
+	branch = main
